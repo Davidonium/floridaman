@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -9,9 +10,12 @@ import (
 	"time"
 
 	"github.com/go-redis/redis/v7"
+	"github.com/joho/godotenv"
 )
 
 func main() {
+
+	godotenv.Load()
 
 	logger := log.New(os.Stderr, "", log.LstdFlags)
 
@@ -51,7 +55,7 @@ func main() {
 	})
 
 	srv := &http.Server{
-		Addr:         ":" + os.Getenv("APP_PORT"),
+		Addr:         fmt.Sprintf(":%s", os.Getenv("APP_PORT")),
 		Handler:      mux,
 		ErrorLog:     log.New(os.Stderr, "http: ", log.LstdFlags),
 		ReadTimeout:  5 * time.Second,
