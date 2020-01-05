@@ -17,7 +17,7 @@ func main() {
 
 	godotenv.Load()
 
-	logger := log.New(os.Stderr, "", log.LstdFlags)
+	logger := log.New(os.Stdout, "", log.LstdFlags)
 
 	client := redis.NewClient(&redis.Options{
 		Addr:     os.Getenv("REDIS_ADDR"),
