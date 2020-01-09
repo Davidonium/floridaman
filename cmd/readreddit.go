@@ -14,10 +14,7 @@ import (
 
 func main() {
 	logger := log.New(os.Stdout, "", log.LstdFlags)
-	err := godotenv.Load()
-	if err != nil {
-		logger.Fatalln("Error loading .env file")
-	}
+	godotenv.Load()
 
 	bcfg := reddit.BotConfig{
 		Agent: "script:gitlab.com/davidonium/floridaman:v0.1 (by tindrem)",
@@ -74,7 +71,7 @@ func main() {
 
 				ex, _ := client.Exists(key).Result()
 				if ex > 0 {
-					logger.Printf("Floridaman article with key \"%s\" already exists", key)
+					logger.Printf("Floridaman article with key \"%s\" already exists\n", key)
 				} else {
 					j, _ := json.Marshal(fma)
 					client.Set(key, string(j), 0)

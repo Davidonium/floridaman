@@ -20,7 +20,7 @@ func main() {
 	logger := log.New(os.Stdout, "", log.LstdFlags)
 
 	client := redis.NewClient(&redis.Options{
-		Addr:     os.Getenv("REDIS_ADDR"),
+		Addr:     GetenvDefault("REDIS_ADDR", "127.0.0.1:8081"),
 		Password: "",
 		DB:       0,
 	})
@@ -28,6 +28,8 @@ func main() {
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("/random", func(w http.ResponseWriter, r *http.Request) {
+
+		w.Header().Set("Content-Type", "application/json")
 
 		key, err := client.RandomKey().Result()
 
@@ -55,7 +57,7 @@ func main() {
 	})
 
 	srv := &http.Server{
-		Addr:         fmt.Sprintf(":%s", os.Getenv("APP_PORT")),
+		Addr:         fmt.Sprintf(":%s", GetenvDefault("APP_PORT", "8081")),
 		Handler:      mux,
 		ErrorLog:     log.New(os.Stderr, "http: ", log.LstdFlags),
 		ReadTimeout:  5 * time.Second,
@@ -65,11 +67,22 @@ func main() {
 
 	err := srv.ListenAndServe()
 
-	log.Fatalln(err)
+	logger.Fatalln(err)
+}
+
+func GetenvDefault(key string, d string) string {
+	e, ok := os.LookupEnv(key)
+
+	if !ok {
+		e = d
+	}
+
+	return e
 }
 
 func WriteInternalServerError(w http.ResponseWriter) {
 	w.WriteHeader(http.StatusInternalServerError)
+	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(struct {
 		Message string `json:"message"`
 	}{
