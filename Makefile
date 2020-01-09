@@ -3,7 +3,12 @@ build:
 	go build -o build/api cmd/api.go
 	go build -o build/readreddit cmd/readreddit.go
 
-.PHONY: runapi
+.PHONY: build_linux
+build_linux:
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o build/api_linux cmd/api.go
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o build/readreddit_linux cmd/readreddit.go
+
+.PHONY: api
 api: build
 	./build/api
 
