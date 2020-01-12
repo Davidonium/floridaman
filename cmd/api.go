@@ -21,10 +21,11 @@ func main() {
 	logger := log.New(os.Stdout, "", log.LstdFlags)
 
 	client := redis.NewClient(&redis.Options{
-		Addr:       GetenvDefault("REDIS_ADDR", "127.0.0.1:6379"),
-		Password:   "",
-		DB:         0,
-		MaxRetries: 3,
+		Addr:        GetenvDefault("REDIS_ADDR", "127.0.0.1:6379"),
+		Password:    "",
+		DB:          0,
+		MaxRetries:  3,
+		IdleTimeout: 4 * time.Second,
 	})
 
 	mux := http.NewServeMux()
