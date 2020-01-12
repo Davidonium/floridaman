@@ -85,6 +85,7 @@ func main() {
 	logger.Fatalln(err)
 }
 
+// GetenvDefault gets the `key` environment variable or returns the default value
 func GetenvDefault(key string, d string) string {
 	e, ok := os.LookupEnv(key)
 
