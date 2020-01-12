@@ -74,7 +74,7 @@ func main() {
 	srv := &http.Server{
 		Addr:         fmt.Sprintf(":%s", GetenvDefault("APP_PORT", "8081")),
 		Handler:      mux,
-		ErrorLog:     log.New(os.Stderr, "http: ", log.LstdFlags),
+		ErrorLog:     log.New(os.Stdout, "", log.LstdFlags),
 		ReadTimeout:  5 * time.Second,
 		WriteTimeout: 10 * time.Second,
 		IdleTimeout:  15 * time.Second,
