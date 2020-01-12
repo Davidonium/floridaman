@@ -38,6 +38,7 @@ func main() {
 
 		if err != nil {
 			WriteInternalServerError(w)
+			logger.Printf("%v\n", err)
 			return
 		}
 
@@ -45,6 +46,7 @@ func main() {
 
 		if err != nil {
 			WriteInternalServerError(w)
+			logger.Printf("%v\n", err)
 			return
 		}
 	})
