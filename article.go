@@ -19,7 +19,7 @@ func NewArticleFromReddit(post *reddit.Post) Article {
 	}
 }
 
-func GetRawFromRedis(client *redis.Client) (string, error) {
+func ReadRawArticleFromRedis(client *redis.Client) (string, error) {
 	key, err := client.RandomKey().Result()
 
 	if err != nil {
