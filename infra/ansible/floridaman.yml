@@ -1,0 +1,6 @@
+---
+- hosts: floridaman
+  become: true
+  roles:
+    - nginx
+    - redis

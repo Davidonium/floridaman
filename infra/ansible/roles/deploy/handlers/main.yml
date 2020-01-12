@@ -1,0 +1,6 @@
+---
+- name: floridaman api is restarted
+  service:
+    name: floridaman
+    state: restarted
+    enabled: yes

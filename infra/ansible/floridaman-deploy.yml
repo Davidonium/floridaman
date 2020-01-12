@@ -1,0 +1,7 @@
+---
+- hosts: floridaman
+  become: true
+  vars_files:
+    - floridaman_vars.yml
+  roles:
+    - deploy

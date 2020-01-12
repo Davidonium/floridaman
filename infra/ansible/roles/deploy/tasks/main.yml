@@ -1,0 +1,35 @@
+---
+- name: ensure app folder is present
+  file:
+    path: /opt/floridaman
+    state: directory
+    mode: '0755'
+
+- name: copy api binary to server
+  copy:
+    src: "{{ src_dir }}/build/api_linux"
+    dest: /opt/floridaman/api
+    owner: ubuntu
+    group: ubuntu
+    mode: '0744'
+
+- name: copy readreddit binary to server
+  copy:
+    src: "{{ src_dir }}/build/readreddit_linux"
+    dest: /opt/floridaman/readreddit
+    owner: ubuntu
+    group: ubuntu
+    mode: '0744'
+
+- name: create service file
+  template:
+    src: floridaman.service.j2
+    dest: /lib/systemd/system/floridaman.service
+    owner: ubuntu
+    group: ubuntu
+    mode: '0644'
+
+- debug:
+    msg: "trigger floridaman api restarted"
+  changed_when: true
+  notify: floridaman api is restarted

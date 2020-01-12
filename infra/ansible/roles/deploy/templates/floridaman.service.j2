@@ -1,0 +1,25 @@
+[Unit]
+Description=Floridaman simplest api
+ConditionPathExists=/opt/floridaman
+After=network.target
+
+[Service]
+Type=simple
+User=ubuntu
+Group=ubuntu
+
+Restart=on-failure
+RestartSec=10
+
+WorkingDirectory=/opt/floridaman
+
+ExecStart=/opt/floridaman/api
+
+PermissionsStartOnly=true
+
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=floridaman
+
+[Install]
+WantedBy=multi-user.target
