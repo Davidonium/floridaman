@@ -11,6 +11,7 @@ import (
 
 	"github.com/go-redis/redis/v7"
 	"github.com/joho/godotenv"
+	"gitlab.com/davidonium/floridaman"
 )
 
 func main() {
@@ -31,15 +32,7 @@ func main() {
 
 		w.Header().Set("Content-Type", "application/json")
 
-		key, err := client.RandomKey().Result()
-
-		if err != nil {
-			WriteInternalServerError(w)
-			logger.Println(err)
-			return
-		}
-
-		fda, err := client.Get(key).Result()
+		fda, err := floridaman.GetRawFromRedis(client)
 
 		if err != nil {
 			WriteInternalServerError(w)

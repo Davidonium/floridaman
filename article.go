@@ -1,6 +1,7 @@
 package floridaman
 
 import (
+	"github.com/go-redis/redis/v7"
 	"github.com/turnage/graw/reddit"
 )
 
@@ -16,4 +17,14 @@ func NewArticleFromReddit(post *reddit.Post) Article {
 		Link:   post.URL,
 		Source: "reddit",
 	}
+}
+
+func GetRawFromRedis(client *redis.Client) (string, error) {
+	key, err := client.RandomKey().Result()
+
+	if err != nil {
+		return "", err
+	}
+
+	return client.Get(key).Result()
 }
