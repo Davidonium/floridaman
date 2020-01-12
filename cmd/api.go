@@ -34,7 +34,7 @@ func main() {
 
 		w.Header().Set("Content-Type", "application/json")
 
-		fda, err := floridaman.ReadRawArticleFromRedis(client)
+		fda, err := floridaman.ReadRandomArticleFromRedis(client)
 
 		if err != nil {
 			WriteInternalServerError(w)
