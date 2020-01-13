@@ -23,5 +23,7 @@
 - name: execute certbot command
   become: yes
   command: "certbot certonly --nginx -d {{ domain }} -m {{ letsencrypt_email }} --agree-tos -n"
+  args:
+    creates: "/etc/letsencrypt/live/{{ domain }}/privkey.pem"
 
 
