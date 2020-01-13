@@ -1,0 +1,27 @@
+---
+- name: ensure software-properties-common is present
+  apt:
+    name: software-properties-common
+    state: present
+
+- name: ensure certbot repo is present
+  apt_repository:
+    repo: ppa:certbot/certbot
+
+- name: ensure certbot is present
+  apt:
+    name: certbot
+    state: present
+    update_cache: true
+
+- name: ensure certbot nginx plugin is present
+  apt:
+    name: python-certbot-nginx
+    state: present
+    update_cache: true
+
+- name: execute certbot command
+  become: yes
+  command: "certbot certonly --nginx -d {{ domain }} -m {{ letsencrypt_email }} --agree-tos -n"
+
+

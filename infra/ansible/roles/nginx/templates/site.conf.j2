@@ -1,6 +1,16 @@
 server {
-    listen        80;
+    listen 80 default_server;
+	listen [::]:80 default_server;
+	server_name _;
+	return 301 https://$host$request_uri;
+}
+
+server {
+    listen        443 ssl;
     server_name   {{ domain }};
+
+    ssl_certificate     /etc/letsencrypt/live/{{ domain }}/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/{{ domain }}/privkey.pem;
 
     location / {
       proxy_pass      http://127.0.0.1:8081;

@@ -1,2 +1,3 @@
 ---
+letsencrypt_email: your@email.com
 src_dir: /path/to/go/project
