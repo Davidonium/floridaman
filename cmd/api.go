@@ -1,12 +1,17 @@
 package main
 
 import (
+	"bytes"
+	"crypto/hmac"
+	"crypto/sha256"
 	"encoding/json"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 	"time"
 
 	"github.com/go-redis/redis/v7"
@@ -30,8 +35,27 @@ func main() {
 
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("/random", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
 
+		res, _ := client.Ping().Result()
+
+		if res == "PONG" {
+			res = "UP"
+		} else {
+			res = "DOWN"
+		}
+
+		json.NewEncoder(w).Encode(struct {
+			Status string `json:"status"`
+			Redis  string `json:"redis"`
+		}{
+			Status: "UP",
+			Redis:  res,
+		})
+	})
+
+	mux.HandleFunc("/random", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 
 		fda, err := floridaman.ReadRandomArticleFromRedis(client)
@@ -51,23 +75,37 @@ func main() {
 		}
 	})
 
-	mux.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/random-slack", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 
-		res, _ := client.Ping().Result()
+		ok := ValidateSlackRequest(r)
 
-		if res == "PONG" {
-			res = "UP"
-		} else {
-			res = "DOWN"
+		if !ok {
+			logger.Printf("invalid slack request %v\n", r)
+			w.WriteHeader(http.StatusBadRequest)
+			json.NewEncoder(w).Encode(struct {
+				Message string `json:"message"`
+			}{
+				Message: "Invalid slack request",
+			})
+			return
 		}
 
+		fda, err := floridaman.ReadRandomArticleFromRedis(client)
+
+		if err != nil {
+			WriteInternalServerError(w)
+			logger.Printf("%v\n", err)
+			return
+		}
+
+		article := &floridaman.Article{}
+		json.Unmarshal([]byte(fda), article)
+
 		json.NewEncoder(w).Encode(struct {
-			Status string `json:"status"`
-			Redis  string `json:"redis"`
+			Text string `json:"text"`
 		}{
-			Status: "UP",
-			Redis:  res,
+			Text: article.Title,
 		})
 	})
 
@@ -104,4 +142,42 @@ func WriteInternalServerError(w http.ResponseWriter) {
 	}{
 		Message: "Internal server error",
 	})
+}
+
+func ValidateSlackRequest(r *http.Request) bool {
+	s := r.Header.Get("X-Slack-Signature")
+	t := r.Header.Get("X-Slack-Request-Timestamp")
+
+	ts, err := strconv.ParseInt(t, 10, 64)
+
+	if err != nil {
+		return false
+	}
+
+	tsu := time.Unix(ts, 0)
+
+	if time.Now().Sub(tsu) > 5*time.Minute {
+		return false
+	}
+
+	body, err := ioutil.ReadAll(r.Body)
+
+	defer r.Body.Close()
+
+	if err != nil {
+		return false
+	}
+
+	r.Body = ioutil.NopCloser(bytes.NewBuffer(body))
+
+	msg := fmt.Sprintf("v0:%s:%s", t, body)
+
+	return ValidateHMAC([]byte(msg), []byte(s), []byte(os.Getenv("SLACK_SIGNING_SECRET")))
+}
+
+func ValidateHMAC(originalMessage, hashedMessage, key []byte) bool {
+	hm := hmac.New(sha256.New, key)
+	hm.Write(originalMessage)
+	expectedMAC := hm.Sum(nil)
+	return hmac.Equal(hashedMessage, expectedMAC)
 }
