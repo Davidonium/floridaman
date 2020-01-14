@@ -144,7 +144,7 @@ func WriteInternalServerError(w http.ResponseWriter) {
 	})
 }
 
-func ValidateSlackRequest(r *http.Request) bool {
+func ValidateSlackRequest(r *http.Request, logger log.Logger) bool {
 	s := r.Header.Get("X-Slack-Signature")
 	t := r.Header.Get("X-Slack-Request-Timestamp")
 
@@ -157,6 +157,7 @@ func ValidateSlackRequest(r *http.Request) bool {
 	tsu := time.Unix(ts, 0)
 
 	if time.Now().Sub(tsu) > 5*time.Minute {
+		logger.Println("timestamp difference is greater than 5 minutes")
 		return false
 	}
 
@@ -172,7 +173,14 @@ func ValidateSlackRequest(r *http.Request) bool {
 
 	msg := fmt.Sprintf("v0:%s:%s", t, body)
 
-	return ValidateHMAC([]byte(msg), []byte(s), []byte(os.Getenv("SLACK_SIGNING_SECRET")))
+	ok := ValidateHMAC([]byte(msg), []byte(s), []byte(os.Getenv("SLACK_SIGNING_SECRET")))
+
+	if !ok {
+		logger.Printf("error validating hmac signature from slack: %s, generated %s\n", s, msg)
+		return false
+	}
+
+	return true
 }
 
 func ValidateHMAC(originalMessage, hashedMessage, key []byte) bool {
