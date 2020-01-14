@@ -78,7 +78,7 @@ func main() {
 	mux.HandleFunc("/random-slack", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 
-		ok := ValidateSlackRequest(r)
+		ok := ValidateSlackRequest(r, logger)
 
 		if !ok {
 			logger.Printf("invalid slack request %v\n", r)
@@ -144,7 +144,7 @@ func WriteInternalServerError(w http.ResponseWriter) {
 	})
 }
 
-func ValidateSlackRequest(r *http.Request, logger log.Logger) bool {
+func ValidateSlackRequest(r *http.Request, logger *log.Logger) bool {
 	s := r.Header.Get("X-Slack-Signature")
 	t := r.Header.Get("X-Slack-Request-Timestamp")
 
