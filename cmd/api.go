@@ -175,10 +175,7 @@ func ValidateSlackRequest(r *http.Request, logger *log.Logger) bool {
 	msg := fmt.Sprintf("v0:%s:%s", t, body)
 
 	ss := os.Getenv("SLACK_SIGNING_SECRET")
-	logger.Printf("before hashing ss: %s | %s\n", ss, msg)
-
 	sig := SlackHashHMAC([]byte(msg), []byte(ss))
-
 	ok := hmac.Equal([]byte(sig), []byte(s))
 	if !ok {
 		logger.Printf("error validating hmac signature from slack: %s, generated %s\n", s, sig)
