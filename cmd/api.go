@@ -174,9 +174,10 @@ func ValidateSlackRequest(r *http.Request, logger *log.Logger) bool {
 
 	msg := fmt.Sprintf("v0:%s:%s", t, body)
 
-	logger.Printf("before hashing %s\n", msg)
+	ss := os.Getenv("SLACK_SIGNING_SECRET")
+	logger.Printf("before hashing ss: %s | %s\n", ss, msg)
 
-	sig := SlackHashHMAC([]byte(msg), []byte(os.Getenv("SLACK_SIGNING_SECRET")))
+	sig := SlackHashHMAC([]byte(msg), []byte(ss))
 
 	ok := hmac.Equal([]byte(sig), []byte(s))
 	if !ok {
@@ -193,5 +194,3 @@ func SlackHashHMAC(msg, key []byte) string {
 	finalHash := hm.Sum(nil)
 	return fmt.Sprintf("v0=%s", hex.EncodeToString(finalHash))
 }
-
-//return hmac.Equal(hashedMessage, expectedMAC)
