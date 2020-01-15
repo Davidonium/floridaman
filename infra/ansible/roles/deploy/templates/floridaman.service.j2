@@ -7,13 +7,12 @@ After=network.target
 Type=simple
 User=ubuntu
 Group=ubuntu
-
 Restart=on-failure
 RestartSec=10
 
 WorkingDirectory=/opt/floridaman
 
-Environment=SLACK_SIGNING_SECRET={{ slack_signing_secret }}
+Environment="SLACK_SIGNING_SECRET={{ slack_signing_secret }}"
 ExecStart=/opt/floridaman/api
 
 PermissionsStartOnly=true
