@@ -13,7 +13,8 @@ RestartSec=10
 
 WorkingDirectory=/opt/floridaman
 
-ExecStart=SLACK_SIGNING_SECRET={{ slack_signing_secret }} /opt/floridaman/api
+Environment=SLACK_SIGNING_SECRET={{ slack_signing_secret }}
+ExecStart=/opt/floridaman/api
 
 PermissionsStartOnly=true
 
