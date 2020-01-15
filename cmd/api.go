@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"crypto/hmac"
 	"crypto/sha256"
-	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -189,7 +188,7 @@ func SlackHashHMAC(msg, key []byte) string {
 	hm := hmac.New(sha256.New, key)
 	hm.Write(msg)
 	finalHash := hm.Sum(nil)
-	return fmt.Sprintf("v0=%s", hex.EncodeToString(finalHash))
+	return fmt.Sprintf("v0=%s", finalHash)
 }
 
 //return hmac.Equal(hashedMessage, expectedMAC)
