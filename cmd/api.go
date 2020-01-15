@@ -16,13 +16,12 @@ import (
 	"time"
 
 	"github.com/go-redis/redis/v7"
-	"github.com/joho/godotenv"
 	"gitlab.com/davidonium/floridaman"
 )
 
 func main() {
 
-	godotenv.Load()
+	//godotenv.Load()
 
 	logger := log.New(os.Stdout, "", log.LstdFlags)
 
