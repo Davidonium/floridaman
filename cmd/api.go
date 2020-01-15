@@ -106,7 +106,7 @@ func main() {
 		json.NewEncoder(w).Encode(struct {
 			Text string `json:"text"`
 		}{
-			Text: article.Title,
+			Text: fmt.Sprintf("%s (%s)", article.Title, article.Link),
 		})
 	})
 
