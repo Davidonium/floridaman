@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"crypto/hmac"
 	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -173,19 +174,22 @@ func ValidateSlackRequest(r *http.Request, logger *log.Logger) bool {
 
 	msg := fmt.Sprintf("v0:%s:%s", t, body)
 
-	ok := ValidateHMAC([]byte(msg), []byte(s), []byte(os.Getenv("SLACK_SIGNING_SECRET")))
+	sig := SlackHashHMAC([]byte(msg), []byte(os.Getenv("SLACK_SIGNING_SECRET")))
 
+	ok := hmac.Equal([]byte(sig), []byte(s))
 	if !ok {
-		logger.Printf("error validating hmac signature from slack: %s, generated %s\n", s, msg)
+		logger.Printf("error validating hmac signature from slack: %s, generated %s\n", s, sig)
 		return false
 	}
 
 	return true
 }
 
-func ValidateHMAC(originalMessage, hashedMessage, key []byte) bool {
+func SlackHashHMAC(msg, key []byte) string {
 	hm := hmac.New(sha256.New, key)
-	hm.Write(originalMessage)
-	expectedMAC := hm.Sum(nil)
-	return hmac.Equal(hashedMessage, expectedMAC)
+	hm.Write(msg)
+	finalHash := hm.Sum(nil)
+	return fmt.Sprintf("v0=%s", hex.EncodeToString(finalHash))
 }
+
+//return hmac.Equal(hashedMessage, expectedMAC)
