@@ -59,7 +59,7 @@ func main() {
 	mux.HandleFunc("/random", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 
-		fda, err := floridaman.ReadRandomArticleFromRedis(client)
+		fda, err := floridaman.ReadRandomArticle(client)
 
 		if err != nil {
 			WriteInternalServerError(w)
@@ -92,7 +92,7 @@ func main() {
 			return
 		}
 
-		fda, err := floridaman.ReadRandomArticleFromRedis(client)
+		fda, err := floridaman.ReadRandomArticle(client)
 
 		if err != nil {
 			WriteInternalServerError(w)
