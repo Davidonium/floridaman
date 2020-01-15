@@ -1,18 +1,11 @@
 package main
 
 import (
-	"bytes"
-	"crypto/hmac"
-	"crypto/sha256"
-	"encoding/hex"
 	"encoding/json"
 	"fmt"
-	"io"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
-	"strconv"
 	"time"
 
 	"github.com/go-redis/redis/v7"
@@ -67,7 +60,7 @@ func main() {
 			return
 		}
 
-		_, err = io.WriteString(w, fda)
+		_, err = w.Write([]byte(fda))
 
 		if err != nil {
 			WriteInternalServerError(w)
@@ -79,7 +72,7 @@ func main() {
 	mux.HandleFunc("/random-slack", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 
-		ok := ValidateSlackRequest(r, logger)
+		ok := floridaman.ValidateSlackRequest(r, logger)
 
 		if !ok {
 			logger.Printf("invalid slack request %v\n", r)
@@ -143,51 +136,4 @@ func WriteInternalServerError(w http.ResponseWriter) {
 	}{
 		Message: "Internal server error",
 	})
-}
-
-func ValidateSlackRequest(r *http.Request, logger *log.Logger) bool {
-	s := r.Header.Get("X-Slack-Signature")
-	t := r.Header.Get("X-Slack-Request-Timestamp")
-
-	ts, err := strconv.ParseInt(t, 10, 64)
-
-	if err != nil {
-		return false
-	}
-
-	tsu := time.Unix(ts, 0)
-
-	if time.Now().Sub(tsu) > 5*time.Minute {
-		logger.Println("timestamp difference is greater than 5 minutes")
-		return false
-	}
-
-	body, err := ioutil.ReadAll(r.Body)
-
-	defer r.Body.Close()
-
-	if err != nil {
-		return false
-	}
-
-	r.Body = ioutil.NopCloser(bytes.NewBuffer(body))
-
-	msg := fmt.Sprintf("v0:%s:%s", t, body)
-
-	ss := os.Getenv("SLACK_SIGNING_SECRET")
-	sig := SlackHashHMAC([]byte(msg), []byte(ss))
-	ok := hmac.Equal([]byte(sig), []byte(s))
-	if !ok {
-		logger.Printf("error validating hmac signature from slack: %s, generated %s\n", s, sig)
-		return false
-	}
-
-	return true
-}
-
-func SlackHashHMAC(msg, key []byte) string {
-	hm := hmac.New(sha256.New, key)
-	hm.Write(msg)
-	finalHash := hm.Sum(nil)
-	return fmt.Sprintf("v0=%s", hex.EncodeToString(finalHash))
 }
