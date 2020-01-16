@@ -14,8 +14,12 @@ import (
 	"time"
 )
 
+type SlackResponse struct {
+	Text string `json:"text"`
+}
+
 func ValidateSlackRequest(r *http.Request, logger *log.Logger) bool {
-	s := r.Header.Get("X-Slack-Signature")
+	ssig := r.Header.Get("X-Slack-Signature")
 	t := r.Header.Get("X-Slack-Request-Timestamp")
 
 	ts, err := strconv.ParseInt(t, 10, 64)
@@ -44,17 +48,17 @@ func ValidateSlackRequest(r *http.Request, logger *log.Logger) bool {
 	msg := fmt.Sprintf("v0:%s:%s", t, body)
 
 	ss := os.Getenv("SLACK_SIGNING_SECRET")
-	sig := slackHashHMAC([]byte(msg), []byte(ss))
-	ok := hmac.Equal([]byte(sig), []byte(s))
+	sig := hashHMAC([]byte(msg), []byte(ss))
+	ok := hmac.Equal([]byte(sig), []byte(ssig))
 	if !ok {
-		logger.Printf("error validating hmac signature from slack: %s, generated %s\n", s, sig)
+		logger.Printf("error validating hmac signature from slack: %s, generated %s\n", ssig, sig)
 		return false
 	}
 
 	return true
 }
 
-func slackHashHMAC(msg, key []byte) string {
+func hashHMAC(msg, key []byte) string {
 	hm := hmac.New(sha256.New, key)
 	hm.Write(msg)
 	finalHash := hm.Sum(nil)

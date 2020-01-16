@@ -13,6 +13,10 @@ import (
 	"gitlab.com/davidonium/floridaman"
 )
 
+type ErrorResponse struct {
+	Message string `json:"message"`
+}
+
 func main() {
 
 	godotenv.Load()
@@ -77,11 +81,7 @@ func main() {
 		if !ok {
 			logger.Printf("invalid slack request %v\n", r)
 			w.WriteHeader(http.StatusBadRequest)
-			json.NewEncoder(w).Encode(struct {
-				Message string `json:"message"`
-			}{
-				Message: "Invalid slack request",
-			})
+			json.NewEncoder(w).Encode(ErrorResponse{Message: "Invalid slack request"})
 			return
 		}
 
@@ -96,11 +96,10 @@ func main() {
 		article := &floridaman.Article{}
 		json.Unmarshal([]byte(fda), article)
 
-		json.NewEncoder(w).Encode(struct {
-			Text string `json:"text"`
-		}{
+		response := floridaman.SlackResponse{
 			Text: fmt.Sprintf("%s (%s)", article.Title, article.Link),
-		})
+		}
+		json.NewEncoder(w).Encode(response)
 	})
 
 	srv := &http.Server{
@@ -131,9 +130,5 @@ func GetenvDefault(key string, d string) string {
 func WriteInternalServerError(w http.ResponseWriter) {
 	w.WriteHeader(http.StatusInternalServerError)
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(struct {
-		Message string `json:"message"`
-	}{
-		Message: "Internal server error",
-	})
+	json.NewEncoder(w).Encode(ErrorResponse{Message: "Internal server error"})
 }
