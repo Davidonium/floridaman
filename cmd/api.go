@@ -97,7 +97,8 @@ func main() {
 		json.Unmarshal([]byte(fda), article)
 
 		response := floridaman.SlackResponse{
-			Text: fmt.Sprintf("%s (%s)", article.Title, article.Link),
+			Text:         fmt.Sprintf("%s (%s)", article.Title, article.Link),
+			ResponseType: "in_channel",
 		}
 		json.NewEncoder(w).Encode(response)
 	})

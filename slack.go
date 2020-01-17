@@ -15,7 +15,8 @@ import (
 )
 
 type SlackResponse struct {
-	Text string `json:"text"`
+	ResponseType string `json:"response_type"`
+	Text         string `json:"text"`
 }
 
 func ValidateSlackRequest(r *http.Request, logger *log.Logger) bool {
