@@ -33,25 +33,7 @@ func main() {
 
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
-
-		res, _ := client.Ping().Result()
-
-		if res == "PONG" {
-			res = "UP"
-		} else {
-			res = "DOWN"
-		}
-
-		json.NewEncoder(w).Encode(struct {
-			Status string `json:"status"`
-			Redis  string `json:"redis"`
-		}{
-			Status: "UP",
-			Redis:  res,
-		})
-	})
+	mux.HandleFunc("/health", floridaman.NewHealthHandler(client))
 
 	mux.HandleFunc("/random", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
