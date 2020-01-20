@@ -9,7 +9,6 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"os"
 	"strconv"
 	"time"
 )
@@ -19,7 +18,7 @@ type SlackResponse struct {
 	Text         string `json:"text"`
 }
 
-func ValidateSlackRequest(r *http.Request, logger *log.Logger) bool {
+func ValidateSlackRequest(r *http.Request, logger *log.Logger, ssecret string) bool {
 	ssig := r.Header.Get("X-Slack-Signature")
 	t := r.Header.Get("X-Slack-Request-Timestamp")
 
@@ -37,8 +36,7 @@ func ValidateSlackRequest(r *http.Request, logger *log.Logger) bool {
 	}
 
 	body, err := ioutil.ReadAll(r.Body)
-
-	defer r.Body.Close()
+	r.Body.Close()
 
 	if err != nil {
 		return false
@@ -48,8 +46,7 @@ func ValidateSlackRequest(r *http.Request, logger *log.Logger) bool {
 
 	msg := fmt.Sprintf("v0:%s:%s", t, body)
 
-	ss := os.Getenv("SLACK_SIGNING_SECRET")
-	sig := hashHMAC([]byte(msg), []byte(ss))
+	sig := hashHMAC([]byte(msg), []byte(ssecret))
 	ok := hmac.Equal([]byte(sig), []byte(ssig))
 	if !ok {
 		logger.Printf("error validating hmac signature from slack: %s, generated %s\n", ssig, sig)

@@ -58,7 +58,7 @@ func main() {
 	mux.HandleFunc("/random-slack", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 
-		ok := floridaman.ValidateSlackRequest(r, logger)
+		ok := floridaman.ValidateSlackRequest(r, logger, os.Getenv("SLACK_SIGNING_SECRET"))
 
 		if !ok {
 			logger.Printf("invalid slack request %v\n", r)
