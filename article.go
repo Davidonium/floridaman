@@ -1,6 +1,9 @@
 package floridaman
 
 import (
+	"log"
+	"net/http"
+
 	"github.com/go-redis/redis/v7"
 	"github.com/turnage/graw/reddit"
 )
@@ -16,6 +19,28 @@ func NewArticleFromReddit(post *reddit.Post) Article {
 		Title:  post.Title,
 		Link:   post.URL,
 		Source: "reddit",
+	}
+}
+
+func NewRandomHandler(logger *log.Logger, client *redis.Client) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+
+		fda, err := ReadRandomArticle(client)
+
+		if err != nil {
+			WriteInternalServerError(w)
+			logger.Printf("%v\n", err)
+			return
+		}
+
+		_, err = w.Write([]byte(fda))
+
+		if err != nil {
+			WriteInternalServerError(w)
+			logger.Printf("%v\n", err)
+			return
+		}
 	}
 }
 

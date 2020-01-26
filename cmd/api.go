@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -12,10 +11,6 @@ import (
 	"github.com/joho/godotenv"
 	"gitlab.com/davidonium/floridaman"
 )
-
-type ErrorResponse struct {
-	Message string `json:"message"`
-}
 
 func main() {
 
@@ -35,55 +30,9 @@ func main() {
 
 	mux.HandleFunc("/health", floridaman.NewHealthHandler(client))
 
-	mux.HandleFunc("/random", func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
+	mux.HandleFunc("/random", floridaman.NewRandomHandler(logger, client))
 
-		fda, err := floridaman.ReadRandomArticle(client)
-
-		if err != nil {
-			WriteInternalServerError(w)
-			logger.Printf("%v\n", err)
-			return
-		}
-
-		_, err = w.Write([]byte(fda))
-
-		if err != nil {
-			WriteInternalServerError(w)
-			logger.Printf("%v\n", err)
-			return
-		}
-	})
-
-	mux.HandleFunc("/random-slack", func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
-
-		ok := floridaman.ValidateSlackRequest(r, logger, os.Getenv("SLACK_SIGNING_SECRET"))
-
-		if !ok {
-			logger.Printf("invalid slack request %v\n", r)
-			w.WriteHeader(http.StatusBadRequest)
-			json.NewEncoder(w).Encode(ErrorResponse{Message: "Invalid slack request"})
-			return
-		}
-
-		fda, err := floridaman.ReadRandomArticle(client)
-
-		if err != nil {
-			WriteInternalServerError(w)
-			logger.Printf("%v\n", err)
-			return
-		}
-
-		article := &floridaman.Article{}
-		json.Unmarshal([]byte(fda), article)
-
-		response := floridaman.SlackResponse{
-			Text:         fmt.Sprintf("%s (%s)", article.Title, article.Link),
-			ResponseType: "in_channel",
-		}
-		json.NewEncoder(w).Encode(response)
-	})
+	mux.HandleFunc("/random-slack", floridaman.NewSlackRandomHandler(logger, client))
 
 	srv := &http.Server{
 		Addr:         fmt.Sprintf(":%s", GetenvDefault("APP_PORT", "8081")),
@@ -108,10 +57,4 @@ func GetenvDefault(key string, d string) string {
 	}
 
 	return e
-}
-
-func WriteInternalServerError(w http.ResponseWriter) {
-	w.WriteHeader(http.StatusInternalServerError)
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(ErrorResponse{Message: "Internal server error"})
 }

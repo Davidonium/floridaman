@@ -5,17 +5,53 @@ import (
 	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/hex"
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 	"strconv"
 	"time"
+
+	"github.com/go-redis/redis/v7"
 )
 
 type SlackResponse struct {
 	ResponseType string `json:"response_type"`
 	Text         string `json:"text"`
+}
+
+func NewSlackRandomHandler(logger *log.Logger, client *redis.Client) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+
+		ok := ValidateSlackRequest(r, logger, os.Getenv("SLACK_SIGNING_SECRET"))
+
+		if !ok {
+			logger.Printf("invalid slack request %v\n", r)
+			w.WriteHeader(http.StatusBadRequest)
+			json.NewEncoder(w).Encode(ErrorResponse{Message: "Invalid slack request"})
+			return
+		}
+
+		fda, err := ReadRandomArticle(client)
+
+		if err != nil {
+			WriteInternalServerError(w)
+			logger.Printf("%v\n", err)
+			return
+		}
+
+		article := &Article{}
+		json.Unmarshal([]byte(fda), article)
+
+		response := SlackResponse{
+			Text:         fmt.Sprintf("%s (%s)", article.Title, article.Link),
+			ResponseType: "in_channel",
+		}
+		json.NewEncoder(w).Encode(response)
+	}
 }
 
 func ValidateSlackRequest(r *http.Request, logger *log.Logger, ssecret string) bool {
@@ -36,11 +72,12 @@ func ValidateSlackRequest(r *http.Request, logger *log.Logger, ssecret string) b
 	}
 
 	body, err := ioutil.ReadAll(r.Body)
-	r.Body.Close()
 
 	if err != nil {
 		return false
 	}
+
+	defer r.Body.Close()
 
 	r.Body = ioutil.NopCloser(bytes.NewBuffer(body))
 
