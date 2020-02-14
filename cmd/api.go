@@ -26,13 +26,12 @@ func main() {
 		IdleTimeout: 4 * time.Second,
 	})
 
+	articleReader := floridaman.NewRedisArticleReader(client)
+
 	mux := http.NewServeMux()
-
 	mux.HandleFunc("/health", floridaman.NewHealthHandler(client))
-
-	mux.HandleFunc("/random", floridaman.NewRandomHandler(logger, client))
-
-	mux.HandleFunc("/random-slack", floridaman.NewSlackRandomHandler(logger, client))
+	mux.HandleFunc("/random", floridaman.NewRandomHandler(logger, articleReader))
+	mux.HandleFunc("/random-slack", floridaman.NewSlackRandomHandler(logger, articleReader))
 
 	srv := &http.Server{
 		Addr:         fmt.Sprintf(":%s", GetenvDefault("APP_PORT", "8081")),

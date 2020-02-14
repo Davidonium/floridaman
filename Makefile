@@ -1,3 +1,4 @@
+.PHONY: build
 build:
 	go build -o build/api cmd/api.go
 	go build -o build/readreddit cmd/readreddit.go

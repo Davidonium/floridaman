@@ -1,6 +1,7 @@
 package floridaman
 
 import (
+	"encoding/json"
 	"log"
 	"net/http"
 
@@ -14,6 +15,47 @@ type Article struct {
 	Source string `json:"source"`
 }
 
+type ArticleReader interface {
+	Random() (Article, error)
+	RawRandom() (string, error)
+}
+
+type RedisArticleReader struct {
+	client *redis.Client
+}
+
+func NewRedisArticleReader(client *redis.Client) *RedisArticleReader {
+	return &RedisArticleReader{client: client}
+}
+
+func (r *RedisArticleReader) Random() (Article, error) {
+	ra, err := r.RawRandom()
+
+	if err != nil {
+		return Article{}, err
+	}
+
+	a := Article{}
+	err = json.Unmarshal([]byte(ra), &a)
+
+	if err != nil {
+		return Article{}, err
+	}
+
+	return a, nil
+
+}
+
+func (r *RedisArticleReader) RawRandom() (string, error) {
+	key, err := r.client.RandomKey().Result()
+
+	if err != nil {
+		return "", err
+	}
+
+	return r.client.Get(key).Result()
+}
+
 func NewArticleFromReddit(post *reddit.Post) Article {
 	return Article{
 		Title:  post.Title,
@@ -22,11 +64,11 @@ func NewArticleFromReddit(post *reddit.Post) Article {
 	}
 }
 
-func NewRandomHandler(logger *log.Logger, client *redis.Client) http.HandlerFunc {
+func NewRandomHandler(logger *log.Logger, ar ArticleReader) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 
-		fda, err := ReadRandomArticle(client)
+		fda, err := ar.RawRandom()
 
 		if err != nil {
 			WriteInternalServerError(w)

@@ -13,8 +13,6 @@ import (
 	"os"
 	"strconv"
 	"time"
-
-	"github.com/go-redis/redis/v7"
 )
 
 type SlackResponse struct {
@@ -22,7 +20,7 @@ type SlackResponse struct {
 	Text         string `json:"text"`
 }
 
-func NewSlackRandomHandler(logger *log.Logger, client *redis.Client) http.HandlerFunc {
+func NewSlackRandomHandler(logger *log.Logger, ar ArticleReader) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 
@@ -35,16 +33,13 @@ func NewSlackRandomHandler(logger *log.Logger, client *redis.Client) http.Handle
 			return
 		}
 
-		fda, err := ReadRandomArticle(client)
+		article, err := ar.Random()
 
 		if err != nil {
 			WriteInternalServerError(w)
 			logger.Printf("%v\n", err)
 			return
 		}
-
-		article := &Article{}
-		json.Unmarshal([]byte(fda), article)
 
 		response := SlackResponse{
 			Text:         fmt.Sprintf("%s (%s)", article.Title, article.Link),
