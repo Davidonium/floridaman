@@ -85,13 +85,3 @@ func NewRandomHandler(logger *log.Logger, ar ArticleReader) http.HandlerFunc {
 		}
 	}
 }
-
-func ReadRandomArticle(client *redis.Client) (string, error) {
-	key, err := client.RandomKey().Result()
-
-	if err != nil {
-		return "", err
-	}
-
-	return client.Get(key).Result()
-}
