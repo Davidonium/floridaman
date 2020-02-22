@@ -32,6 +32,7 @@ func main() {
 	mux.HandleFunc("/health", floridaman.NewHealthHandler(client))
 	mux.HandleFunc("/random", floridaman.NewRandomHandler(logger, articleReader))
 	mux.HandleFunc("/random-slack", floridaman.NewSlackRandomHandler(logger, articleReader))
+	mux.HandleFunc("/redirect-slack", floridaman.NewSlackOAuthRedirectHandler())
 
 	srv := &http.Server{
 		Addr:         fmt.Sprintf(":%s", GetenvDefault("APP_PORT", "8081")),

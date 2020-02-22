@@ -49,6 +49,13 @@ func NewSlackRandomHandler(logger *log.Logger, ar ArticleReader) http.HandlerFun
 	}
 }
 
+func NewSlackOAuthRedirectHandler() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("floridaman oauth success!"))
+		w.WriteHeader(200)
+	}
+}
+
 func ValidateSlackRequest(r *http.Request, logger *log.Logger, ssecret string) bool {
 	ssig := r.Header.Get("X-Slack-Signature")
 	t := r.Header.Get("X-Slack-Request-Timestamp")
