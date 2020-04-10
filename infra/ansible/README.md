@@ -1,18 +1,16 @@
 # Ansible playbooks
 
-first copy the variables file 
+Copy versioned vars file. Then modify to match your infrastructure
 ```bash
 cp floridaman_vars.yml.dist floridaman_vars.yml
 ```
 
-file the file with correct values.
-
-to provision the machines
+Machine provisioning:
 ```bash
 ansible-playbook -i hosts floridaman.yml
 ```
 
-to deploy the go executable
+Application deploy:
 ```bash
 ansible-playbook -i hosts floridaman-deploy.yml
 ```
