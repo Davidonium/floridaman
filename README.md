@@ -35,7 +35,7 @@ Read reddit script:
 make readreddit
 ```
 
-## Api Spec
+## API Spec
 
 `GET /health`
 
