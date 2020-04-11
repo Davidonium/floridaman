@@ -1,0 +1,27 @@
+---
+- name: install site config
+  template:
+    src: site.conf.j2
+    dest: "/etc/nginx/sites-available/{{domain}}.conf"
+    owner: root
+    group: root
+    mode: 0644
+
+- name: remove default site
+  file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+
+- name: enable site config
+  file:
+    src: "/etc/nginx/sites-available/{{domain}}.conf"
+    dest: "/etc/nginx/sites-enabled/{{domain}}"
+    owner: root
+    group: root
+    state: link
+
+- name: restart nginx
+  service:
+    name: nginx
+    state: restarted
+

@@ -1,6 +1,8 @@
 ---
 - name: ensure redis is present
-  apt: pkg=redis-server state=latest
+  apt:
+    pkg: redis-server
+    state: latest
 
 - name: ensure redis configuration
   template:
@@ -9,4 +11,10 @@
     owner: root
     group: root
     mode: 0644
-  notify: restart redis
+
+- name: start redis
+  service:
+    name: redis-server
+    state: started
+    enabled: yes
+

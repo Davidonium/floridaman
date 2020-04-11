@@ -4,6 +4,7 @@
   vars_files:
     - floridaman_vars.yml
   roles:
+    - nginx-base
     - certs
-    - nginx
+    - nginx-site
     - redis

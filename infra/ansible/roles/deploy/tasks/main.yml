@@ -29,7 +29,8 @@
     group: ubuntu
     mode: '0644'
 
-- debug:
-    msg: "trigger floridaman api restarted"
-  changed_when: true
-  notify: floridaman api is restarted
+- name: floridaman api is restarted
+  service:
+    name: floridaman
+    state: restarted
+    enabled: yes
