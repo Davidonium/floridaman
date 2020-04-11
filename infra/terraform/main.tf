@@ -19,6 +19,9 @@ resource "aws_lightsail_instance" "app" {
   blueprint_id      = "ubuntu_18_04"
   bundle_id         = "micro_2_0"
   key_pair_name     = aws_lightsail_key_pair.app.name
+    provisioner "local-exec" {
+    command = "aws lightsail put-instance-public-ports --instance-name=${local.appname}.${var.domain} --port-infos fromPort=443,toPort=443,protocol=https"
+  }
 }
 
 data "aws_route53_zone" "zone" {
