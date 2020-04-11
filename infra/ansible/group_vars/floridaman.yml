@@ -1,5 +1,3 @@
 ---
-domain: floridaman.davidonium.com
-
 redis_port: 6379
 redis_databases: 1

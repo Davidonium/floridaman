@@ -14,7 +14,7 @@ resource "aws_lightsail_static_ip" "app" {
 }
 
 resource "aws_lightsail_instance" "app" {
-  name              = "${local.appname}.${local.domain}"
+  name              = "${local.appname}.${var.domain}"
   availability_zone = "${local.region}b"
   blueprint_id      = "ubuntu_18_04"
   bundle_id         = "micro_2_0"
@@ -22,7 +22,7 @@ resource "aws_lightsail_instance" "app" {
 }
 
 data "aws_route53_zone" "zone" {
-  name = "${local.domain}."
+  name = "${var.domain}."
 }
 
 resource "aws_route53_record" "app" {
@@ -34,6 +34,6 @@ resource "aws_route53_record" "app" {
 }
 
 resource "aws_lightsail_key_pair" "app" {
-  name    = local.domain
+  name    = var.domain
   pgp_key = var.pgp_key
 }

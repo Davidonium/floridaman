@@ -1,4 +1,5 @@
 ---
-letsencrypt_email: your@email.com
-src_dir: /path/to/go/project
+domain: subdomain.domain.com # fully qualified domain of the application
+letsencrypt_email: your@email.com # email that will be used to create let's encrypt certs
+src_dir: /path/to/go/project # root directory where the source code is
 slack_signing_secret: thesecret
