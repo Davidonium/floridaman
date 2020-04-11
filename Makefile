@@ -1,11 +1,15 @@
 .PHONY: build
 build:
-	go build -o build/api cmd/api.go
-	go build -o build/readreddit cmd/readreddit.go
+	go build -o build/api cmd/api/main.go
+	go build -o build/readreddit cmd/cli/main.go
 
 build_linux: build/api_linux build/readreddit_linux
-	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o build/api_linux cmd/api.go
-	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o build/readreddit_linux cmd/readreddit.go
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o build/api_linux cmd/api/main.go
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o build/readreddit_linux cmd/cli/main.go
+
+clean:
+	go clean
+	rm -rf build
 
 api: build
 	./build/api
