@@ -35,14 +35,17 @@ func main() {
 	mux.HandleFunc("/random-slack", floridaman.NewSlackRandomHandler(logger, articleReader))
 	mux.HandleFunc("/redirect-slack", floridaman.NewSlackOAuthRedirectHandler())
 
+	port := GetenvDefault("APP_PORT", "8081")
 	srv := &http.Server{
-		Addr:         fmt.Sprintf(":%s", GetenvDefault("APP_PORT", "8081")),
+		Addr:         fmt.Sprintf(":%s", port),
 		Handler:      mux,
 		ErrorLog:     log.New(os.Stdout, "", log.LstdFlags),
 		ReadTimeout:  5 * time.Second,
 		WriteTimeout: 10 * time.Second,
 		IdleTimeout:  15 * time.Second,
 	}
+
+	logger.Printf("Floridaman api listening on port: %s", port)
 
 	err := srv.ListenAndServe()
 
