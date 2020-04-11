@@ -19,6 +19,11 @@ make build
 
 ## Run
 
+Before running the application on your machine, make sure the `.env` file exists. If not create it and fill it.
+```bash
+cp .env.dist .env
+```
+
 Api:
 ```bash
 make api
