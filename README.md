@@ -30,6 +30,10 @@ Read reddit script:
 make readreddit
 ```
 
+### TODO
+
+* Make terraform add a lightsail firewall entry for HTTPS in terraform (not sure this is possible).
+
 ### Disclamer
 I did this project for fun as a result of a joke with some friends at work and me wanting to learn terraform and ansible. It features absolutely 0 tests and bad practices, I don't work like this though :D.
 
