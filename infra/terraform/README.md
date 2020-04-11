@@ -18,6 +18,8 @@ terraform apply -auto-approve
 This will make the instance available through ssh
 ```bash
 terraform output priv_key | base64 -D | gpg --decrypt --input - > ~/.ssh/id_floridaman
-terraform output pub_key > ~/.ssh/id_floridaman.pub 
+# make the permissions of the private key secure
+chmod 600 ~/.ssh/id_floridaman 
+terraform output pub_key > ~/.ssh/id_floridaman.pub
 terraform output ssh_config >> ~/.ssh/config
 ```
