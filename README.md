@@ -70,7 +70,7 @@ It validates the slack request as documented in https://api.slack.com/docs/verif
 
 It responds with the most basic response.
 
-200 OK
+`200 OK`
 ```json
 {
   "response_type": "in_channel",
@@ -78,7 +78,8 @@ It responds with the most basic response.
 }
 ```
 
-400 Bad Request:
+`400 Bad Request`
+
 when the slack request could not be validated
 ```json
 {
@@ -90,7 +91,7 @@ when the slack request could not be validated
 
 Generic Errors:
 
-500
+`500 Internal Server Error`
 ```json
 {
   "message": "Interal server error"
