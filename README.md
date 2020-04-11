@@ -2,7 +2,7 @@
 
 This project is an HTTP API with an endpoint that provides a random floridaman heading each time and an integration with slack to add a slash command to slack to provide the same functionality.
 
-Also includes a script to retrieve all the floridaman headings from /r/floridaman in Reddit.
+Also includes a script that retrieves all the floridaman headings from /r/floridaman in Reddit and dumps them in redis.
 
 The project uses Redis for storage and [graw](https://github.com/turnage/graw) for querying the reddit API.
 
@@ -24,7 +24,7 @@ Before running the application on your machine, make sure the `.env` file exists
 cp .env.dist .env
 ```
 
-Api:
+API:
 ```bash
 make api
 ```
