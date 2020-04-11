@@ -15,7 +15,11 @@ import (
 
 func main() {
 	logger := log.New(os.Stdout, "", log.LstdFlags)
-	godotenv.Load()
+
+	_, ok := os.LookupEnv("REDDIT_CLIENT_ID")
+	if !ok {
+		godotenv.Load()
+	}
 
 	bcfg := reddit.BotConfig{
 		Agent: "script:github.com/davidonium/floridaman:v0.1 (by tindrem)",

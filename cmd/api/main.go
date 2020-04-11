@@ -15,7 +15,10 @@ import (
 
 func main() {
 
-	godotenv.Load()
+	_, ok := os.LookupEnv("APP_PORT")
+	if !ok {
+		godotenv.Load()
+	}
 
 	logger := log.New(os.Stdout, "", log.LstdFlags)
 
