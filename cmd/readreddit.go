@@ -9,7 +9,8 @@ import (
 	"github.com/go-redis/redis/v7"
 	"github.com/joho/godotenv"
 	"github.com/turnage/graw/reddit"
-	"gitlab.com/davidonium/floridaman"
+
+	"github.com/davidonium/floridaman"
 )
 
 func main() {
@@ -17,7 +18,7 @@ func main() {
 	godotenv.Load()
 
 	bcfg := reddit.BotConfig{
-		Agent: "script:gitlab.com/davidonium/floridaman:v0.1 (by tindrem)",
+		Agent: "script:github.com/davidonium/floridaman:v0.1 (by tindrem)",
 		App: reddit.App{
 			ID:       os.Getenv("REDDIT_CLIENT_ID"),
 			Secret:   os.Getenv("REDDIT_CLIENT_SECRET"),

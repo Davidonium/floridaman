@@ -1,4 +1,4 @@
-module gitlab.com/davidonium/floridaman
+module github.com/davidonium/floridaman
 
 go 1.14
 

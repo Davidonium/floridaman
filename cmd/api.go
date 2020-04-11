@@ -9,7 +9,8 @@ import (
 
 	"github.com/go-redis/redis/v7"
 	"github.com/joho/godotenv"
-	"gitlab.com/davidonium/floridaman"
+
+	"github.com/davidonium/floridaman"
 )
 
 func main() {
