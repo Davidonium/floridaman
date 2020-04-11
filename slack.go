@@ -63,6 +63,7 @@ func ValidateSlackRequest(r *http.Request, logger *log.Logger, ssecret string) b
 	ts, err := strconv.ParseInt(t, 10, 64)
 
 	if err != nil {
+		logger.Printf("X-Slack-Request-Timestamp is not a parsable number, got \"%s\"\n", t)
 		return false
 	}
 
@@ -76,6 +77,7 @@ func ValidateSlackRequest(r *http.Request, logger *log.Logger, ssecret string) b
 	body, err := ioutil.ReadAll(r.Body)
 
 	if err != nil {
+		logger.Printf("error reading body %v", err)
 		return false
 	}
 
