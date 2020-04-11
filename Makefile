@@ -23,3 +23,11 @@ get:
 
 deploy: build_linux
 	ansible-playbook -i infra/ansible/hosts infra/ansible/floridaman-deploy.yml
+
+.PHONY: format
+format:
+	goimports -w .
+
+.PHONY: lint
+lint:
+	goimports -l .
