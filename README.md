@@ -59,7 +59,8 @@ Returns a random entry in each request
 
 `POST /random-slack`
 
-This endpoint handles slack slash commands that one must setup following this link: https://api.slack.com/interactivity/slash-commands#app_command_handling
+This endpoint handles slack slash commands that one must setup following https://api.slack.com/interactivity/slash-commands#app_command_handling
+
 It validates the slack request as documented in https://api.slack.com/docs/verifying-requests-from-slack
 
 It responds with the most basic response.
