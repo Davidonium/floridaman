@@ -1,5 +1,6 @@
 output "ssh_config" {
   value = <<EOF
+
 Host ${local.appname}
 	HostName		${aws_route53_record.app.name}
 	User			${aws_lightsail_instance.app.username}
