@@ -26,8 +26,8 @@ deploy: build_linux
 
 .PHONY: format
 format:
-	goimports -w .
+	goimports -local github.com/davidonium/floridaman -w .
 
 .PHONY: lint
 lint:
-	goimports -l .
+	goimports -local github.com/davidonium/floridaman -l .
