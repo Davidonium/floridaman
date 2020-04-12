@@ -53,7 +53,7 @@ Application Monitoring
 
 Returns a random entry in each request
 
-200 OK
+`200 OK`
 ```json
 {
   "title": "Florida Man stops a robbery",
