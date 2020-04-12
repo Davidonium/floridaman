@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"time"
 
 	"github.com/go-redis/redis/v7"
 	"github.com/joho/godotenv"
@@ -29,7 +30,7 @@ func main() {
 			Username: os.Getenv("REDDIT_CLIENT_USERNAME"),
 			Password: os.Getenv("REDDIT_CLIENT_PASSWORD"),
 		},
-		Rate: 0,
+		Rate: time.Second,
 	}
 
 	client := redis.NewClient(&redis.Options{
