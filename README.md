@@ -66,6 +66,9 @@ Returns a random entry in each request
 
 This endpoint handles slack slash commands that one must setup following https://api.slack.com/interactivity/slash-commands#app_command_handling
 
+`SLACK_SIGNING_SECRET` environment variable must be present with a valid slack signing secret provided in their UI.
+
+
 It validates the slack request as documented in https://api.slack.com/docs/verifying-requests-from-slack
 
 It responds with the most basic response.
