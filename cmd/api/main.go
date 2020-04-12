@@ -23,7 +23,7 @@ func main() {
 	logger := log.New(os.Stdout, "", log.LstdFlags)
 
 	client := redis.NewClient(&redis.Options{
-		Addr:        GetenvDefault("REDIS_ADDR", "127.0.0.1:6379"),
+		Addr:        GetEnvDefault("REDIS_ADDR", "127.0.0.1:6379"),
 		Password:    "",
 		DB:          0,
 		MaxRetries:  3,
@@ -38,7 +38,7 @@ func main() {
 	mux.HandleFunc("/random-slack", floridaman.NewSlackRandomHandler(logger, articleReader))
 	mux.HandleFunc("/redirect-slack", floridaman.NewSlackOAuthRedirectHandler())
 
-	port := GetenvDefault("APP_PORT", "8081")
+	port := GetEnvDefault("APP_PORT", "8081")
 	srv := &http.Server{
 		Addr:         fmt.Sprintf(":%s", port),
 		Handler:      mux,
@@ -55,8 +55,8 @@ func main() {
 	logger.Fatalln(err)
 }
 
-// GetenvDefault gets the `key` environment variable or returns the default value
-func GetenvDefault(key string, d string) string {
+// GetEnvDefault gets the `key` environment variable or returns the default value
+func GetEnvDefault(key string, d string) string {
 	e, ok := os.LookupEnv(key)
 
 	if !ok {
