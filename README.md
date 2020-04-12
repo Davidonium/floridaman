@@ -41,7 +41,7 @@ make readreddit
 
 Application Monitoring
 
-200 OK
+`200 OK`
 ```json
 {
   "status": "UP",
