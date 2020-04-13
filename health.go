@@ -12,10 +12,8 @@ type healthResponse struct {
 	Redis  string `json:"redis"`
 }
 
-func NewHealthHandler(client *redis.Client) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
-
+func NewHealthHandler(client *redis.Client) ApiHandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) error {
 		res, _ := client.Ping().Result()
 
 		if res == "PONG" {
@@ -28,6 +26,6 @@ func NewHealthHandler(client *redis.Client) http.HandlerFunc {
 			Status: "UP",
 			Redis:  res,
 		}
-		json.NewEncoder(w).Encode(response)
+		return json.NewEncoder(w).Encode(response)
 	}
 }

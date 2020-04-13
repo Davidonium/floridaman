@@ -2,7 +2,6 @@ package floridaman
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
 
 	"github.com/go-redis/redis/v7"
@@ -64,24 +63,20 @@ func NewArticleFromReddit(post *reddit.Post) Article {
 	}
 }
 
-func NewRandomHandler(logger *log.Logger, ar ArticleReader) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
-
+func NewRandomHandler(ar ArticleReader) ApiHandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) error {
 		fda, err := ar.RawRandom()
 
 		if err != nil {
-			WriteInternalServerError(w)
-			logger.Printf("%v\n", err)
-			return
+			return err
 		}
 
 		_, err = w.Write([]byte(fda))
 
 		if err != nil {
-			WriteInternalServerError(w)
-			logger.Printf("%v\n", err)
-			return
+			return err
 		}
+
+		return nil
 	}
 }

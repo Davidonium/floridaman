@@ -32,11 +32,13 @@ func main() {
 
 	articleReader := floridaman.NewRedisArticleReader(client)
 
+	ah := floridaman.NewApiHandler(logger)
+
 	mux := http.NewServeMux()
-	mux.HandleFunc("/health", floridaman.NewHealthHandler(client))
-	mux.HandleFunc("/random", floridaman.NewRandomHandler(logger, articleReader))
-	mux.HandleFunc("/random-slack", floridaman.NewSlackRandomHandler(logger, articleReader))
-	mux.HandleFunc("/redirect-slack", floridaman.NewSlackOAuthRedirectHandler())
+	mux.Handle("/health", ah.ToHandler(floridaman.NewHealthHandler(client)))
+	mux.Handle("/random", ah.ToHandler(floridaman.NewRandomHandler(articleReader)))
+	mux.Handle("/random-slack", ah.ToHandler(floridaman.NewSlackRandomHandler(logger, articleReader, os.Getenv("SLACK_SIGNING_SECRET"))))
+	mux.Handle("/redirect-slack", ah.ToHandler(floridaman.NewSlackOAuthRedirectHandler()))
 
 	port := GetEnvDefault("APP_PORT", "8081")
 	srv := &http.Server{

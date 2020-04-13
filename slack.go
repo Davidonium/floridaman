@@ -6,11 +6,11 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
-	"os"
 	"strconv"
 	"time"
 )
@@ -20,39 +20,39 @@ type SlackResponse struct {
 	Text         string `json:"text"`
 }
 
-func NewSlackRandomHandler(logger *log.Logger, ar ArticleReader) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
+var ErrInvalidSlackRequest = errors.New("invalid slack request")
 
-		ok := ValidateSlackRequest(r, logger, os.Getenv("SLACK_SIGNING_SECRET"))
+func NewSlackRandomHandler(logger *log.Logger, ar ArticleReader, ssecret string) ApiHandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) error {
+		ok := ValidateSlackRequest(r, logger, ssecret)
 
 		if !ok {
-			logger.Printf("invalid slack request %v\n", r)
-			w.WriteHeader(http.StatusBadRequest)
-			json.NewEncoder(w).Encode(ErrorResponse{Message: "Invalid slack request"})
-			return
+			return ErrInvalidSlackRequest
 		}
 
 		article, err := ar.Random()
 
 		if err != nil {
-			WriteInternalServerError(w)
-			logger.Printf("%v\n", err)
-			return
+			return err
 		}
 
 		response := SlackResponse{
 			Text:         fmt.Sprintf("%s (%s)", article.Title, article.Link),
 			ResponseType: "in_channel",
 		}
-		json.NewEncoder(w).Encode(response)
+
+		return json.NewEncoder(w).Encode(response)
 	}
 }
 
-func NewSlackOAuthRedirectHandler() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("floridaman oauth success!"))
-		w.WriteHeader(200)
+func NewSlackOAuthRedirectHandler() ApiHandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) error {
+		_, err := w.Write([]byte("floridaman oauth success!"))
+
+		if err != nil {
+			return err
+		}
+		return nil
 	}
 }
 
