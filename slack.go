@@ -8,7 +8,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"strconv"
@@ -22,7 +22,7 @@ type SlackResponse struct {
 
 var ErrInvalidSlackRequest = errors.New("invalid slack request")
 
-func NewSlackRandomHandler(logger *log.Logger, ar ArticleReader, ssecret string) ApiHandlerFunc {
+func NewSlackRandomHandler(logger *log.Logger, ar ArticleReader, ssecret string) APIHandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) error {
 		ok := ValidateSlackRequest(r, logger, ssecret)
 
@@ -31,7 +31,6 @@ func NewSlackRandomHandler(logger *log.Logger, ar ArticleReader, ssecret string)
 		}
 
 		article, err := ar.Random()
-
 		if err != nil {
 			return err
 		}
@@ -45,13 +44,13 @@ func NewSlackRandomHandler(logger *log.Logger, ar ArticleReader, ssecret string)
 	}
 }
 
-func NewSlackOAuthRedirectHandler() ApiHandlerFunc {
+func NewSlackOAuthRedirectHandler() APIHandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) error {
 		_, err := w.Write([]byte("floridaman oauth success!"))
-
 		if err != nil {
 			return err
 		}
+
 		return nil
 	}
 }
@@ -61,7 +60,6 @@ func ValidateSlackRequest(r *http.Request, logger *log.Logger, ssecret string) b
 	t := r.Header.Get("X-Slack-Request-Timestamp")
 
 	ts, err := strconv.ParseInt(t, 10, 64)
-
 	if err != nil {
 		logger.Printf("X-Slack-Request-Timestamp is not a parsable number, got \"%s\"\n", t)
 		return false
@@ -69,13 +67,12 @@ func ValidateSlackRequest(r *http.Request, logger *log.Logger, ssecret string) b
 
 	tsu := time.Unix(ts, 0)
 
-	if time.Now().Sub(tsu) > 5*time.Minute {
+	if time.Since(tsu) > 5*time.Minute {
 		logger.Println("timestamp difference is greater than 5 minutes")
 		return false
 	}
 
-	body, err := ioutil.ReadAll(r.Body)
-
+	body, err := io.ReadAll(r.Body)
 	if err != nil {
 		logger.Printf("error reading body %v", err)
 		return false
@@ -83,12 +80,13 @@ func ValidateSlackRequest(r *http.Request, logger *log.Logger, ssecret string) b
 
 	defer r.Body.Close()
 
-	r.Body = ioutil.NopCloser(bytes.NewBuffer(body))
+	r.Body = io.NopCloser(bytes.NewBuffer(body))
 
 	msg := fmt.Sprintf("v0:%s:%s", t, body)
 
 	sig := hashHMAC([]byte(msg), []byte(ssecret))
 	ok := hmac.Equal([]byte(sig), []byte(ssig))
+
 	if !ok {
 		logger.Printf("error validating hmac signature from slack: %s, generated %s\n", ssig, sig)
 		return false
@@ -100,6 +98,8 @@ func ValidateSlackRequest(r *http.Request, logger *log.Logger, ssecret string) b
 func hashHMAC(msg, key []byte) string {
 	hm := hmac.New(sha256.New, key)
 	hm.Write(msg)
+
 	finalHash := hm.Sum(nil)
+
 	return fmt.Sprintf("v0=%s", hex.EncodeToString(finalHash))
 }

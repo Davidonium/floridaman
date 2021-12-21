@@ -6,7 +6,8 @@ import (
 )
 
 func SHA1String(text string) string {
-	hasher := sha1.New()
-	hasher.Write([]byte(text))
-	return hex.EncodeToString(hasher.Sum(nil))
+	h := sha1.New()
+	h.Write([]byte(text))
+
+	return hex.EncodeToString(h.Sum(nil))
 }

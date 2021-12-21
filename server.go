@@ -1,4 +1,4 @@
-package main
+package floridaman
 
 import (
 	"fmt"
@@ -7,17 +7,17 @@ import (
 	"os"
 	"time"
 
-	"github.com/go-redis/redis/v7"
+	"github.com/go-redis/redis/v8"
 	"github.com/joho/godotenv"
-
-	"github.com/davidonium/floridaman"
 )
 
-func main() {
-
+func ApiServerListen() {
 	_, ok := os.LookupEnv("APP_PORT")
 	if !ok {
-		godotenv.Load()
+		err := godotenv.Load()
+		if err != nil {
+			log.Fatalln("Failed to load dotenv environment variables", err)
+		}
 	}
 
 	logger := log.New(os.Stdout, "", log.LstdFlags)
@@ -30,15 +30,15 @@ func main() {
 		IdleTimeout: 4 * time.Second,
 	})
 
-	articleReader := floridaman.NewRedisArticleReader(client)
+	articleReader := NewRedisArticleReader(client)
 
-	ah := floridaman.NewApiHandler(logger)
+	ah := NewAPIHandler(logger)
 
 	mux := http.NewServeMux()
-	mux.Handle("/health", ah.ToHandler(floridaman.NewHealthHandler(client)))
-	mux.Handle("/random", ah.ToHandler(floridaman.NewRandomHandler(articleReader)))
-	mux.Handle("/random-slack", ah.ToHandler(floridaman.NewSlackRandomHandler(logger, articleReader, os.Getenv("SLACK_SIGNING_SECRET"))))
-	mux.Handle("/redirect-slack", ah.ToHandler(floridaman.NewSlackOAuthRedirectHandler()))
+	mux.Handle("/health", ah.ToHandler(NewHealthHandler(client)))
+	mux.Handle("/random", ah.ToHandler(NewRandomHandler(articleReader)))
+	mux.Handle("/random-slack", ah.ToHandler(NewSlackRandomHandler(logger, articleReader, os.Getenv("SLACK_SIGNING_SECRET"))))
+	mux.Handle("/redirect-slack", ah.ToHandler(NewSlackOAuthRedirectHandler()))
 
 	port := GetEnvDefault("APP_PORT", "8081")
 	srv := &http.Server{
@@ -57,8 +57,8 @@ func main() {
 	logger.Fatalln(err)
 }
 
-// GetEnvDefault gets the `key` environment variable or returns the default value
-func GetEnvDefault(key string, d string) string {
+// GetEnvDefault gets the `key` environment variable or returns the default value.
+func GetEnvDefault(key, d string) string {
 	e, ok := os.LookupEnv(key)
 
 	if !ok {

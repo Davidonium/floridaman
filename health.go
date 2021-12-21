@@ -1,10 +1,11 @@
 package floridaman
 
 import (
+	"context"
 	"encoding/json"
 	"net/http"
 
-	"github.com/go-redis/redis/v7"
+	"github.com/go-redis/redis/v8"
 )
 
 type healthResponse struct {
@@ -12,9 +13,9 @@ type healthResponse struct {
 	Redis  string `json:"redis"`
 }
 
-func NewHealthHandler(client *redis.Client) ApiHandlerFunc {
+func NewHealthHandler(client *redis.Client) APIHandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) error {
-		res, _ := client.Ping().Result()
+		res, _ := client.Ping(context.Background()).Result()
 
 		if res == "PONG" {
 			res = "UP"
