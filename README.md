@@ -4,7 +4,7 @@ This project is an HTTP API with an endpoint that provides a random floridaman h
 
 Also includes a script that retrieves all the floridaman headings from /r/floridaman in Reddit and dumps them in redis.
 
-The project uses Redis for storage and [graw](https://github.com/turnage/graw) for querying the reddit API.
+The project uses Redis for storage and [go-reddit](https://github.com/vartanbeno/go-reddit) for querying the reddit API.
 
 Terraform and Ansible are used to provide a very simple infrastructure of a single machine in amazon lightsail with redis installed and an nginx for proxying requests to the go app. The code is under `infra`.
 
@@ -24,15 +24,15 @@ Before running the application on your machine, make sure the `.env` file exists
 cp .env.dist .env
 ```
 
-API:
+API server:
 ```bash
-make api
+go run cmd/floridaman serve
 ```
 
 Read reddit script:
 
 ```bash
-make readreddit
+go run cmd/floridaman readreddit
 ```
 
 ## API Spec
