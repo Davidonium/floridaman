@@ -21,10 +21,9 @@ func main() {
 	}
 
 	err := godotenv.Load()
-	if err != nil {
-		if !errors.Is(err, os.ErrNotExist) {
-			log.Fatalln("Failed to load dotenv environment variables, err:", err)
-		}
+	if err != nil && !errors.Is(err, os.ErrNotExist) {
+		fmt.Fprintln(os.Stderr, "Failed to load dotenv environment variables, err:", err)
+		os.Exit(1)
 	}
 
 	logger := log.New(os.Stdout, "", log.LstdFlags)
