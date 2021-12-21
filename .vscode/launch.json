@@ -19,6 +19,15 @@
             "program": "${workspaceFolder}/cmd/floridaman",
             "args": ["readreddit"],
             "cwd": "${workspaceFolder}"
+        },
+        {
+            "name": "Launch App Server",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "${workspaceFolder}/cmd/floridaman",
+            "args": ["serve"],
+            "cwd": "${workspaceFolder}"
         }
     ]
 }
