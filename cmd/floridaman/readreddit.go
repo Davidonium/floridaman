@@ -1,4 +1,4 @@
-package floridaman
+package main
 
 import (
 	"context"
@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/davidonium/floridaman"
 	"github.com/go-redis/redis/v8"
 	"github.com/joho/godotenv"
 	"github.com/vartanbeno/go-reddit/v2/reddit"
@@ -72,9 +73,9 @@ func ReadRedditArticles() {
 		postNum := len(posts)
 		if postNum > 0 {
 			for _, post := range posts {
-				fma := NewArticleFromReddit(post)
+				fma := floridaman.NewArticleFromReddit(post)
 
-				h := SHA1String(fma.Title)
+				h := floridaman.SHA1String(fma.Title)
 				key := fmt.Sprintf("fm:%s", h)
 
 				ex, _ := client.Exists(context.Background(), key).Result()

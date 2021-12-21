@@ -14,7 +14,7 @@ WorkingDirectory=/opt/floridaman
 
 Environment="SLACK_SIGNING_SECRET={{ slack_signing_secret }}"
 PassEnvironment=SLACK_SIGNING_SECRET
-ExecStart=/opt/floridaman/api
+ExecStart=/opt/floridaman/floridaman serve
 
 PermissionsStartOnly=true
 

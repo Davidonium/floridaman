@@ -1,4 +1,4 @@
-package floridaman
+package main
 
 import (
 	"fmt"
@@ -7,6 +7,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/davidonium/floridaman"
 	"github.com/go-redis/redis/v8"
 	"github.com/joho/godotenv"
 )
@@ -30,15 +31,15 @@ func ApiServerListen() {
 		IdleTimeout: 4 * time.Second,
 	})
 
-	articleReader := NewRedisArticleReader(client)
+	articleReader := floridaman.NewRedisArticleReader(client)
 
-	ah := NewAPIHandler(logger)
+	ah := floridaman.NewAPIHandler(logger)
 
 	mux := http.NewServeMux()
-	mux.Handle("/health", ah.ToHandler(NewHealthHandler(client)))
-	mux.Handle("/random", ah.ToHandler(NewRandomHandler(articleReader)))
-	mux.Handle("/random-slack", ah.ToHandler(NewSlackRandomHandler(logger, articleReader, os.Getenv("SLACK_SIGNING_SECRET"))))
-	mux.Handle("/redirect-slack", ah.ToHandler(NewSlackOAuthRedirectHandler()))
+	mux.Handle("/health", ah.ToHandler(floridaman.NewHealthHandler(client)))
+	mux.Handle("/random", ah.ToHandler(floridaman.NewRandomHandler(articleReader)))
+	mux.Handle("/random-slack", ah.ToHandler(floridaman.NewSlackRandomHandler(logger, articleReader, os.Getenv("SLACK_SIGNING_SECRET"))))
+	mux.Handle("/redirect-slack", ah.ToHandler(floridaman.NewSlackOAuthRedirectHandler()))
 
 	port := GetEnvDefault("APP_PORT", "8081")
 	srv := &http.Server{

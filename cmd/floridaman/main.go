@@ -4,8 +4,6 @@ import (
 	"flag"
 	"fmt"
 	"os"
-
-	"github.com/davidonium/floridaman"
 )
 
 func main() {
@@ -20,9 +18,9 @@ func main() {
 
 	switch args[0] {
 	case "serve":
-		floridaman.ApiServerListen()
+		ApiServerListen()
 	case "readreddit":
-		floridaman.ReadRedditArticles()
+		ReadRedditArticles()
 	default:
 		fmt.Fprintf(os.Stderr, "unknown command %s, options are \"serve\" or \"readreddit\"", args[0])
 		os.Exit(1)

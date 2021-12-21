@@ -7,16 +7,8 @@
 
 - name: copy api binary to server
   copy:
-    src: "{{ src_dir }}/build/api_linux"
-    dest: /opt/floridaman/api
-    owner: ubuntu
-    group: ubuntu
-    mode: '0744'
-
-- name: copy readreddit binary to server
-  copy:
-    src: "{{ src_dir }}/build/readreddit_linux"
-    dest: /opt/floridaman/readreddit
+    src: "{{ src_dir }}/build/floridaman"
+    dest: /opt/floridaman/floridaman
     owner: ubuntu
     group: ubuntu
     mode: '0744'
