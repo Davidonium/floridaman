@@ -16,7 +16,7 @@ help: ## prints help
 
 $(APP_BIN): $(SOURCE_FILES)
 	@mkdir -p $(BUILD_DIR)
-	@CGO_ENABLED=0 $(GO) build -ldflags $(LDFLAGS) -o $(BUILD_DIR)/floridman ./cmd/floridaman
+	@CGO_ENABLED=0 $(GO) build -ldflags $(LDFLAGS) -o $(BUILD_DIR)/floridaman ./cmd/floridaman
 
 build: $(APP_BIN) ## builds floridaman's binary for production use
 

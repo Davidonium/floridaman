@@ -9,21 +9,10 @@ import (
 
 	"github.com/davidonium/floridaman"
 	"github.com/go-redis/redis/v8"
-	"github.com/joho/godotenv"
 	"github.com/vartanbeno/go-reddit/v2/reddit"
 )
 
-func ReadRedditArticles() {
-	logger := log.New(os.Stdout, "", log.LstdFlags)
-
-	_, ok := os.LookupEnv("REDDIT_CLIENT_ID")
-	if !ok {
-		err := godotenv.Load()
-		if err != nil {
-			log.Fatalln("Failed to load dotenv environment variables", err)
-		}
-	}
-
+func ReadRedditArticles(logger *log.Logger) {
 	creds := reddit.Credentials{
 		ID:       os.Getenv("REDDIT_CLIENT_ID"),
 		Secret:   os.Getenv("REDDIT_CLIENT_SECRET"),

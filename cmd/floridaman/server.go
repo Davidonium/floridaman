@@ -9,20 +9,9 @@ import (
 
 	"github.com/davidonium/floridaman"
 	"github.com/go-redis/redis/v8"
-	"github.com/joho/godotenv"
 )
 
-func ApiServerListen() {
-	_, ok := os.LookupEnv("APP_PORT")
-	if !ok {
-		err := godotenv.Load()
-		if err != nil {
-			log.Fatalln("Failed to load dotenv environment variables", err)
-		}
-	}
-
-	logger := log.New(os.Stdout, "", log.LstdFlags)
-
+func ApiServerListen(logger *log.Logger) {
 	client := redis.NewClient(&redis.Options{
 		Addr:        GetEnvDefault("REDIS_ADDR", "127.0.0.1:6379"),
 		Password:    "",
