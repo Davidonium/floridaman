@@ -7,9 +7,10 @@ import (
 	"log"
 	"os"
 
-	"github.com/davidonium/floridaman"
 	"github.com/go-redis/redis/v8"
 	"github.com/vartanbeno/go-reddit/v2/reddit"
+
+	"github.com/davidonium/floridaman"
 )
 
 func ReadRedditArticles(logger *log.Logger) {

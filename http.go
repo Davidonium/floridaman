@@ -14,7 +14,6 @@ type ErrorResponse struct {
 func WriteInternalServerError(w http.ResponseWriter) {
 	w.WriteHeader(http.StatusInternalServerError)
 	json.NewEncoder(w).Encode(ErrorResponse{Message: "Internal server error"})
-
 }
 
 type APIHandlerFunc func(http.ResponseWriter, *http.Request) error

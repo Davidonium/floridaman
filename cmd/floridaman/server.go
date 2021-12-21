@@ -7,8 +7,9 @@ import (
 	"os"
 	"time"
 
-	"github.com/davidonium/floridaman"
 	"github.com/go-redis/redis/v8"
+
+	"github.com/davidonium/floridaman"
 )
 
 func ApiServerListen(logger *log.Logger) {
