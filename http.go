@@ -3,6 +3,7 @@ package floridaman
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"log"
 	"net/http"
 )
@@ -13,7 +14,10 @@ type ErrorResponse struct {
 
 func WriteInternalServerError(w http.ResponseWriter) {
 	w.WriteHeader(http.StatusInternalServerError)
-	json.NewEncoder(w).Encode(ErrorResponse{Message: "Internal server error"})
+	err := json.NewEncoder(w).Encode(ErrorResponse{Message: "Internal server error"})
+	if err != nil {
+		fmt.Println("could not write response")	
+	}
 }
 
 type APIHandlerFunc func(http.ResponseWriter, *http.Request) error

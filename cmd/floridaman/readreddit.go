@@ -39,47 +39,48 @@ func ReadRedditArticles(logger *log.Logger) {
 	}
 
 	first := true
-	np := ""
+	after := ""
 
-	for first || len(np) > 0 {
+	for first || len(after) > 0 {
 		if first {
 			first = false
 		}
 
-		logger.Printf("requesting /r/FloridaMan/top after=%s\n", np)
+		logger.Printf("requesting /r/FloridaMan/top after=%s\n", after)
 
 		opts := &reddit.ListPostOptions{
 			ListOptions: reddit.ListOptions{
 				Limit: 100,
-				After: np,
+				After: after,
 			},
 			Time: "all",
 		}
 		posts, _, err := redditClient.Subreddit.TopPosts(context.Background(), "floridaman", opts)
 		if err != nil {
-			log.Fatalf("Failed to fetch /r/rFloridaMan?after=%s err: %v\n", np, err)
+			log.Fatalf("Failed to fetch /r/rFloridaMan?after=%s err: %v\n", after, err)
 		}
 
 		postNum := len(posts)
-		if postNum > 0 {
-			for _, post := range posts {
-				fma := floridaman.NewArticleFromReddit(post)
-
-				h := floridaman.SHA1String(fma.Title)
-				key := fmt.Sprintf("fm:%s", h)
-
-				ex, _ := client.Exists(context.Background(), key).Result()
-				if ex > 0 {
-					logger.Printf("Floridaman article with key \"%s\" already exists\n", key)
-				} else {
-					j, _ := json.Marshal(fma)
-					client.Set(context.Background(), key, string(j), 0)
-				}
-			}
-
-			np = posts[postNum-1].FullID
-		} else {
-			np = ""
+		if postNum == 0 {
+			after = ""
+			continue
 		}
+
+		for _, post := range posts {
+			fma := floridaman.NewArticleFromReddit(post)
+
+			h := floridaman.SHA1String(fma.Title)
+			key := fmt.Sprintf("fm:%s", h)
+
+			ex, _ := client.Exists(context.Background(), key).Result()
+			if ex > 0 {
+				logger.Printf("Floridaman article with key \"%s\" already exists\n", key)
+			} else {
+				j, _ := json.Marshal(fma)
+				client.Set(context.Background(), key, string(j), 0)
+			}
+		}
+
+		after = posts[postNum-1].FullID
 	}
 }

@@ -30,7 +30,7 @@ func main() {
 
 	switch args[0] {
 	case "serve":
-		ApiServerListen(logger)
+		HTTPServerListen(logger)
 	case "readreddit":
 		ReadRedditArticles(logger)
 	default:

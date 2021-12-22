@@ -12,7 +12,7 @@ import (
 	"github.com/davidonium/floridaman"
 )
 
-func ApiServerListen(logger *log.Logger) {
+func HTTPServerListen(logger *log.Logger) {
 	client := redis.NewClient(&redis.Options{
 		Addr:        GetEnvDefault("REDIS_ADDR", "127.0.0.1:6379"),
 		Password:    "",
