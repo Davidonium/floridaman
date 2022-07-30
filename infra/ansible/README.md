@@ -7,10 +7,10 @@ cp floridaman_vars.yml.dist floridaman_vars.yml
 
 Machine provisioning:
 ```bash
-ansible-playbook -i hosts floridaman.yml
+ansible-playbook floridaman.yml
 ```
 
 Application deploy:
 ```bash
-ansible-playbook -i hosts floridaman-deploy.yml
+ansible-playbook floridaman-deploy.yml
 ```
