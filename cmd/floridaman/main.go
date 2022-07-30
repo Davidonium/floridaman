@@ -16,13 +16,13 @@ func main() {
 	args := flag.Args()
 
 	if len(args) < 1 {
-		fmt.Fprintln(os.Stderr, "missing command, options are \"serve\" or \"readreddit\"")
+		printErr("missing command, options are \"serve\" or \"readreddit\"")
 		os.Exit(1)
 	}
 
 	err := godotenv.Load()
 	if err != nil && !errors.Is(err, os.ErrNotExist) {
-		fmt.Fprintln(os.Stderr, "Failed to load dotenv environment variables, err:", err)
+		printErr("failed to load dotenv environment variables, err: %v\n", err)
 		os.Exit(1)
 	}
 
@@ -34,7 +34,11 @@ func main() {
 	case "readreddit":
 		ReadRedditArticles(logger)
 	default:
-		fmt.Fprintf(os.Stderr, "unknown command %s, options are \"serve\" or \"readreddit\"", args[0])
+		printErr("unknown command %s, options are \"serve\" or \"readreddit\"", args[0])
 		os.Exit(1)
 	}
+}
+
+func printErr(msg string, args ...any) {
+	_, _ = fmt.Fprintf(os.Stderr, msg, args...)
 }
