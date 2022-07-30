@@ -77,7 +77,11 @@ func ReadRedditArticles(logger *log.Logger) {
 			h := util.SHA1String(fma.Title)
 			key := fmt.Sprintf("fm:%s", h)
 
-			ex, _ := client.Exists(ctx, key).Result()
+			ex, err := client.Exists(ctx, key).Result()
+			if err != nil {
+				logger.Printf("failed to check that key \"%s\" exists, skipping\n")
+				continue
+			}
 			if ex > 0 {
 				logger.Printf("Floridaman article with key \"%s\" already exists\n", key)
 			} else {
