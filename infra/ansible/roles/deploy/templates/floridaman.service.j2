@@ -1,6 +1,6 @@
 [Unit]
 Description=Floridaman simplest api
-ConditionPathExists=/opt/floridaman
+ConditionPathExists={{ app_dir }}
 After=network.target
 
 [Service]
@@ -10,11 +10,10 @@ Group=ubuntu
 Restart=on-failure
 RestartSec=10
 
-WorkingDirectory=/opt/floridaman
+WorkingDirectory={{ app_dir }}
 
-Environment="SLACK_SIGNING_SECRET={{ slack_signing_secret }}"
-PassEnvironment=SLACK_SIGNING_SECRET
-ExecStart=/opt/floridaman/floridaman serve
+EnvironmentFile={{ app_dir }}/environment.conf
+ExecStart={{ app_dir }}/floridaman serve
 
 PermissionsStartOnly=true
 
