@@ -17,13 +17,13 @@ func NewRedisArticleReader(client *redis.Client) *RedisArticleReader {
 }
 
 func (r *RedisArticleReader) Random(ctx context.Context) (floridaman.Article, error) {
-	ra, err := r.RawRandom(ctx)
+	rawArticle, err := r.RawRandom(ctx)
 	if err != nil {
 		return floridaman.Article{}, err
 	}
 
 	a := floridaman.Article{}
-	err = json.Unmarshal([]byte(ra), &a)
+	err = json.Unmarshal([]byte(rawArticle), &a)
 
 	if err != nil {
 		return floridaman.Article{}, err
