@@ -1,3 +1,4 @@
 ---
 redis_port: 6379
 redis_databases: 1
+app_dir: /opt/floridaman

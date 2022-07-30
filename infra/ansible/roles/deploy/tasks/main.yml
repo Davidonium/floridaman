@@ -1,14 +1,14 @@
 ---
 - name: ensure app folder is present
   file:
-    path: /opt/floridaman
+    path: {{ app_dir }}
     state: directory
     mode: '0755'
 
 - name: copy api binary to server
   copy:
     src: "{{ src_dir }}/build/floridaman"
-    dest: /opt/floridaman/floridaman
+    dest: {{ app_dir }}/floridaman
     owner: ubuntu
     group: ubuntu
     mode: '0744'
