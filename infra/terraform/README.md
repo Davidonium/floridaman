@@ -1,8 +1,8 @@
 # Terraform
 
-The terraform scripts create the necessary resources to have a working instance in amazon lightsail.
+Terraform scripts create the necessary resources to have a working instance in amazon lightsail.
 
-First the terraform.tfvars file is needed.
+First a terraform.tfvars file is needed.
 
 ```bash
 cp terraform.tfvars.dist terraform.tfvars
