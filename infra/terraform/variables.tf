@@ -1,13 +1,7 @@
-variable "ssh_public_key_path" {
-  default = "~/.ssh/id_rsa.pub"
-}
-
 variable "domain" {
-  description = "base domain host the instance will be assigned, must not include sudomains"
+  description = "base domain host the instance will be assigned, must not include subdomains. e.g. davidonium.com"
 }
 
-variable "aws_access_key" {}
-
-variable "aws_secret_key" {}
-
-variable "pgp_key" {}
+variable "pgp_key" {
+  description = "pgp key used to generate the public and private rsa keys to be able to ssh into the instance"
+}

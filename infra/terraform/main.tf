@@ -1,8 +1,18 @@
-provider "aws" {
-  region = local.region
-  access_key = var.aws_access_key
-  secret_key = var.aws_secret_key
+terraform {
+  backend "local" {}
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 3.0"
+    }
+  }
 }
+
+locals {
+  app_name = "floridaman"
+  region = "eu-west-3"
+}
+
 
 resource "aws_lightsail_static_ip_attachment" "app" {
   static_ip_name = aws_lightsail_static_ip.app.name
@@ -10,27 +20,55 @@ resource "aws_lightsail_static_ip_attachment" "app" {
 }
 
 resource "aws_lightsail_static_ip" "app" {
-  name = local.appname
+  name = local.app_name
 }
 
 resource "aws_lightsail_instance" "app" {
-  name              = "${local.appname}.${var.domain}"
+  name              = "${local.app_name}.${var.domain}"
   availability_zone = "${local.region}b"
-  blueprint_id      = "ubuntu_18_04"
+  blueprint_id      = "ubuntu_22_04"
   bundle_id         = "micro_2_0"
   key_pair_name     = aws_lightsail_key_pair.app.name
-    provisioner "local-exec" {
-    command = "aws lightsail put-instance-public-ports --instance-name=${local.appname}.${var.domain} --port-infos fromPort=443,toPort=443,protocol=https"
+}
+
+resource "aws_lightsail_instance_public_ports" "app" {
+  instance_name = aws_lightsail_instance.app.name
+
+  port_info {
+    cidrs = [
+      "0.0.0.0/0"
+    ]
+    protocol  = "tcp"
+    from_port = 443
+    to_port   = 443
+  }
+
+  port_info {
+    cidrs = [
+      "0.0.0.0/0"
+    ]
+    protocol  = "tcp"
+    from_port = 80
+    to_port   = 80
+  }
+
+  port_info {
+    cidrs = [
+      "0.0.0.0/0"
+    ]
+    protocol  = "tcp"
+    from_port = 22
+    to_port   = 22
   }
 }
 
-data "aws_route53_zone" "zone" {
+data "aws_route53_zone" "app" {
   name = "${var.domain}."
 }
 
 resource "aws_route53_record" "app" {
-  zone_id = data.aws_route53_zone.zone.zone_id
-  name    = "${local.appname}.${data.aws_route53_zone.zone.name}"
+  zone_id = data.aws_route53_zone.app.zone_id
+  name    = "${local.app_name}.${data.aws_route53_zone.app.name}"
   type    = "A"
   ttl     = "86400"
   records = [aws_lightsail_static_ip.app.ip_address]
