@@ -26,13 +26,13 @@ cp .env.dist .env
 
 API server:
 ```bash
-go run cmd/floridaman serve
+go run ./cmd/floridaman serve
 ```
 
 Read reddit script:
 
 ```bash
-go run cmd/floridaman readreddit
+go run ./cmd/floridaman readreddit
 ```
 
 ## API Spec
