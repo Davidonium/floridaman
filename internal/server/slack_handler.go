@@ -34,8 +34,7 @@ func (s *Server) slackRandomArticleHandler(
 		}
 
 		defer func() {
-			err := r.Body.Close()
-			if err != nil {
+			if err := r.Body.Close(); err != nil {
 				s.logger.Printf("failed to close response body: %v", err)
 			}
 		}()
@@ -46,7 +45,7 @@ func (s *Server) slackRandomArticleHandler(
 			return ErrInvalidSlackRequest
 		}
 
-		article, err := articleReader.Random()
+		article, err := articleReader.Random(r.Context())
 		if err != nil {
 			return err
 		}
@@ -71,13 +70,13 @@ func (s *Server) oauthSlackRedirectHandler() APIHandlerFunc {
 	}
 }
 
-func ValidateSlackRequest(r *http.Request, logger *log.Logger, ssecret string, response []byte) bool {
-	ssig := r.Header.Get("X-Slack-Signature")
-	t := r.Header.Get("X-Slack-Request-Timestamp")
+func ValidateSlackRequest(r *http.Request, logger *log.Logger, slackSecret string, response []byte) bool {
+	slackSignature := r.Header.Get("X-Slack-Signature")
+	slackRequestTS := r.Header.Get("X-Slack-Request-Timestamp")
 
-	ts, err := strconv.ParseInt(t, 10, 64)
+	ts, err := strconv.ParseInt(slackRequestTS, 10, 64)
 	if err != nil {
-		logger.Printf("X-Slack-Request-Timestamp is not a parsable number, got \"%s\"\n", t)
+		logger.Printf("X-Slack-Request-Timestamp is not a parsable number, got \"%s\"\n", slackRequestTS)
 		return false
 	}
 
@@ -87,13 +86,13 @@ func ValidateSlackRequest(r *http.Request, logger *log.Logger, ssecret string, r
 		logger.Println("timestamp difference is greater than 5 minutes")
 		return false
 	}
-	msg := fmt.Sprintf("v0:%s:%s", t, response)
+	msg := fmt.Sprintf("v0:%s:%s", slackRequestTS, response)
 
-	sig := util.HMACString([]byte(msg), []byte(ssecret))
-	ok := hmac.Equal([]byte(sig), []byte(ssig))
+	sig := util.HMACString([]byte(msg), []byte(slackSecret))
+	ok := hmac.Equal([]byte(sig), []byte(slackSignature))
 
 	if !ok {
-		logger.Printf("error validating hmac signature from slack: %s, generated %s\n", ssig, sig)
+		logger.Printf("error validating hmac signature from slack: %s, generated %s\n", slackSignature, sig)
 		return false
 	}
 

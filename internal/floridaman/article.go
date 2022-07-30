@@ -1,5 +1,7 @@
 package floridaman
 
+import "context"
+
 type Article struct {
 	Title  string `json:"title"`
 	Link   string `json:"link"`
@@ -7,6 +9,6 @@ type Article struct {
 }
 
 type ArticleReader interface {
-	Random() (Article, error)
-	RawRandom() (string, error)
+	Random(context.Context) (Article, error)
+	RawRandom(context.Context) (string, error)
 }

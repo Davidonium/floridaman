@@ -69,7 +69,7 @@ func ReadRedditArticles(logger *log.Logger) {
 		}
 
 		for _, post := range posts {
-			fma := NewArticleFromReddit(post)
+			fma := articleFromReddit(post)
 
 			h := util.SHA1String(fma.Title)
 			key := fmt.Sprintf("fm:%s", h)
@@ -87,7 +87,7 @@ func ReadRedditArticles(logger *log.Logger) {
 	}
 }
 
-func NewArticleFromReddit(post *reddit.Post) floridaman.Article {
+func articleFromReddit(post *reddit.Post) floridaman.Article {
 	return floridaman.Article{
 		Title:  post.Title,
 		Link:   post.URL,
