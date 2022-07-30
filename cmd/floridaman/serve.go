@@ -7,9 +7,10 @@ import (
 	"os"
 	"time"
 
+	"github.com/go-redis/redis/v8"
+
 	"github.com/davidonium/floridaman/internal/server"
 	"github.com/davidonium/floridaman/internal/storage"
-	"github.com/go-redis/redis/v8"
 )
 
 func HTTPServerListen(logger *log.Logger) {
@@ -33,12 +34,13 @@ func HTTPServerListen(logger *log.Logger) {
 
 	port := GetEnvDefault("APP_PORT", "8081")
 	srv := &http.Server{
-		Addr:         fmt.Sprintf(":%s", port),
-		Handler:      serv,
-		ErrorLog:     log.New(os.Stdout, "", log.LstdFlags),
-		ReadTimeout:  5 * time.Second,
-		WriteTimeout: 10 * time.Second,
-		IdleTimeout:  15 * time.Second,
+		Addr:              fmt.Sprintf(":%s", port),
+		Handler:           serv,
+		ErrorLog:          log.New(os.Stdout, "", log.LstdFlags),
+		ReadTimeout:       15 * time.Second,
+		ReadHeaderTimeout: 10 * time.Second,
+		WriteTimeout:      10 * time.Second,
+		IdleTimeout:       30 * time.Second,
 	}
 
 	logger.Printf("floridaman api listening on port: %s", port)

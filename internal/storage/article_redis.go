@@ -4,8 +4,9 @@ import (
 	"context"
 	"encoding/json"
 
-	"github.com/davidonium/floridaman/internal/floridaman"
 	"github.com/go-redis/redis/v8"
+
+	"github.com/davidonium/floridaman/internal/floridaman"
 )
 
 type RedisArticleReader struct {

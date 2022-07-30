@@ -8,8 +8,9 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/davidonium/floridaman/internal/floridaman"
 	"github.com/go-redis/redis/v8"
+
+	"github.com/davidonium/floridaman/internal/floridaman"
 )
 
 type ErrorResponse struct {
@@ -71,9 +72,14 @@ func (s *Server) handleAPI(handler APIHandlerFunc) http.HandlerFunc {
 	}
 }
 
+func (s *Server) writeJSONString(w http.ResponseWriter, data string) error {
+	w.WriteHeader(http.StatusOK)
+	_, _ = w.Write([]byte(data))
+	return nil
+}
+
 func (s *Server) writeJSON(w http.ResponseWriter, data any) error {
 	b, err := json.Marshal(data)
-
 	if err != nil {
 		s.logger.Printf("could not serialize response to json")
 		return err

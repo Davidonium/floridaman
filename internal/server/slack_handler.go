@@ -14,6 +14,11 @@ import (
 	"github.com/davidonium/floridaman/internal/util"
 )
 
+const (
+	intBase    = 10
+	intBitSize = 64
+)
+
 type slackResponse struct {
 	ResponseType string `json:"response_type"`
 	Text         string `json:"text"`
@@ -29,12 +34,12 @@ func (s *Server) slackRandomArticleHandler(
 	return func(w http.ResponseWriter, r *http.Request) error {
 		body, err := io.ReadAll(r.Body)
 		if err != nil {
-			s.logger.Printf("error reading body %v", err)
+			s.logger.Printf("error reading body: %v", err)
 			return ErrInvalidSlackRequest
 		}
 
 		defer func() {
-			if err := r.Body.Close(); err != nil {
+			if err = r.Body.Close(); err != nil {
 				s.logger.Printf("failed to close response body: %v", err)
 			}
 		}()
@@ -74,7 +79,7 @@ func ValidateSlackRequest(r *http.Request, logger *log.Logger, slackSecret strin
 	slackSignature := r.Header.Get("X-Slack-Signature")
 	slackRequestTS := r.Header.Get("X-Slack-Request-Timestamp")
 
-	ts, err := strconv.ParseInt(slackRequestTS, 10, 64)
+	ts, err := strconv.ParseInt(slackRequestTS, intBase, intBitSize)
 	if err != nil {
 		logger.Printf("X-Slack-Request-Timestamp is not a parsable number, got \"%s\"\n", slackRequestTS)
 		return false
@@ -88,7 +93,8 @@ func ValidateSlackRequest(r *http.Request, logger *log.Logger, slackSecret strin
 	}
 	msg := fmt.Sprintf("v0:%s:%s", slackRequestTS, response)
 
-	sig := util.HMACString([]byte(msg), []byte(slackSecret))
+	sig := fmt.Sprintf("v0=%s", util.HMAC256String([]byte(msg), []byte(slackSecret)))
+
 	ok := hmac.Equal([]byte(sig), []byte(slackSignature))
 
 	if !ok {
