@@ -1,4 +1,4 @@
-FROM golang:1.17 as builder
+FROM golang:1.18 as builder
 RUN useradd -u 10001 floridaman
 
 WORKDIR /tmp/go
@@ -15,8 +15,9 @@ COPY *.go ./
 RUN make build
 
 FROM scratch
-USER floridaman
-COPY --from=builder /tmp/go/build/floridaman /usr/local/bin/floridaman
-COPY --from=builder /etc/passwd /etc/passwd
 
-CMD [ "/usr/local/bin/floridaman", "serve" ]
+COPY --from=builder /tmp/go/build/floridaman /opt/floridaman/floridaman
+COPY --from=builder /etc/passwd /etc/passwd
+USER floridaman
+
+CMD [ "/opt/floridaman/floridaman", "serve" ]
