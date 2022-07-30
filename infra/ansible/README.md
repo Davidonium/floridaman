@@ -15,5 +15,5 @@ It should contain the syntax for declaring environment variables, same as `.env.
 
 Application deploy:
 ```bash
-ansible-playbook floridaman-deploy.yml
+ansible-playbook floridaman-app.yml
 ```

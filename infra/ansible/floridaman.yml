@@ -9,3 +9,4 @@
     - certs
     - nginx-site
     - redis
+    - app
