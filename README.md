@@ -57,7 +57,7 @@ Returns a random entry in each request
 ```json
 {
   "title": "Florida Man stops a robbery",
-  "link": "http://i.imgur.com/2fwv8Iz.jpg",
+  "link": "https://i.imgur.com/2fwv8Iz.jpg",
   "source": "reddit"
 }
 ```
@@ -77,7 +77,7 @@ It responds with the most basic response.
 ```json
 {
   "response_type": "in_channel",
-  "text": "Florida Man stops a robbery (http://i.imgur.com/2fwv8Iz.jpg)"
+  "text": "Florida Man stops a robbery (https://i.imgur.com/2fwv8Iz.jpg)"
 }
 ```
 
@@ -97,7 +97,7 @@ Generic Errors:
 `500 Internal Server Error`
 ```json
 {
-  "message": "Interal server error"
+  "message": "Internal server error"
 }
 ```
 
