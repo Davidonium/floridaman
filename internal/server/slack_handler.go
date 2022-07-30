@@ -1,11 +1,7 @@
-package floridaman
+package server
 
 import (
-	"bytes"
 	"crypto/hmac"
-	"crypto/sha256"
-	"encoding/hex"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
@@ -13,18 +9,38 @@ import (
 	"net/http"
 	"strconv"
 	"time"
+
+	"github.com/davidonium/floridaman/internal/floridaman"
+	"github.com/davidonium/floridaman/internal/util"
 )
 
-type SlackResponse struct {
+type slackResponse struct {
 	ResponseType string `json:"response_type"`
 	Text         string `json:"text"`
 }
 
 var ErrInvalidSlackRequest = errors.New("invalid slack request")
 
-func NewSlackRandomHandler(logger *log.Logger, ar ArticleReader, ssecret string) APIHandlerFunc {
+func (s *Server) slackRandomArticleHandler(
+	logger *log.Logger,
+	ar floridaman.ArticleReader,
+	slackSecret string,
+) APIHandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) error {
-		ok := ValidateSlackRequest(r, logger, ssecret)
+		body, err := io.ReadAll(r.Body)
+		if err != nil {
+			s.logger.Printf("error reading body %v", err)
+			return ErrInvalidSlackRequest
+		}
+
+		defer func() {
+			err := r.Body.Close()
+			if err != nil {
+				s.logger.Printf("failed to close response body: %v", err)
+			}
+		}()
+
+		ok := ValidateSlackRequest(r, logger, slackSecret, body)
 
 		if !ok {
 			return ErrInvalidSlackRequest
@@ -35,16 +51,16 @@ func NewSlackRandomHandler(logger *log.Logger, ar ArticleReader, ssecret string)
 			return err
 		}
 
-		response := SlackResponse{
+		response := slackResponse{
 			Text:         fmt.Sprintf("%s (%s)", article.Title, article.Link),
 			ResponseType: "in_channel",
 		}
 
-		return json.NewEncoder(w).Encode(response)
+		return s.writeJSON(w, response)
 	}
 }
 
-func NewSlackOAuthRedirectHandler() APIHandlerFunc {
+func (s *Server) oauthSlackRedirectHandler() APIHandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) error {
 		_, err := w.Write([]byte("floridaman oauth success!"))
 		if err != nil {
@@ -55,7 +71,7 @@ func NewSlackOAuthRedirectHandler() APIHandlerFunc {
 	}
 }
 
-func ValidateSlackRequest(r *http.Request, logger *log.Logger, ssecret string) bool {
+func ValidateSlackRequest(r *http.Request, logger *log.Logger, ssecret string, response []byte) bool {
 	ssig := r.Header.Get("X-Slack-Signature")
 	t := r.Header.Get("X-Slack-Request-Timestamp")
 
@@ -71,20 +87,9 @@ func ValidateSlackRequest(r *http.Request, logger *log.Logger, ssecret string) b
 		logger.Println("timestamp difference is greater than 5 minutes")
 		return false
 	}
+	msg := fmt.Sprintf("v0:%s:%s", t, response)
 
-	body, err := io.ReadAll(r.Body)
-	if err != nil {
-		logger.Printf("error reading body %v", err)
-		return false
-	}
-
-	defer r.Body.Close()
-
-	r.Body = io.NopCloser(bytes.NewBuffer(body))
-
-	msg := fmt.Sprintf("v0:%s:%s", t, body)
-
-	sig := hashHMAC([]byte(msg), []byte(ssecret))
+	sig := util.HMACString([]byte(msg), []byte(ssecret))
 	ok := hmac.Equal([]byte(sig), []byte(ssig))
 
 	if !ok {
@@ -93,13 +98,4 @@ func ValidateSlackRequest(r *http.Request, logger *log.Logger, ssecret string) b
 	}
 
 	return true
-}
-
-func hashHMAC(msg, key []byte) string {
-	hm := hmac.New(sha256.New, key)
-	hm.Write(msg)
-
-	finalHash := hm.Sum(nil)
-
-	return fmt.Sprintf("v0=%s", hex.EncodeToString(finalHash))
 }

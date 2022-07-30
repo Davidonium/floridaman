@@ -7,32 +7,34 @@ import (
 	"log"
 	"os"
 
+	"github.com/davidonium/floridaman/internal/floridaman"
+	"github.com/davidonium/floridaman/internal/util"
 	"github.com/go-redis/redis/v8"
 	"github.com/vartanbeno/go-reddit/v2/reddit"
-
-	"github.com/davidonium/floridaman"
 )
 
 func ReadRedditArticles(logger *log.Logger) {
-	creds := reddit.Credentials{
+	credentials := reddit.Credentials{
 		ID:       os.Getenv("REDDIT_CLIENT_ID"),
 		Secret:   os.Getenv("REDDIT_CLIENT_SECRET"),
 		Username: os.Getenv("REDDIT_CLIENT_USERNAME"),
 		Password: os.Getenv("REDDIT_CLIENT_PASSWORD"),
 	}
 	redditClient, err := reddit.NewClient(
-		creds,
+		credentials,
 		reddit.WithUserAgent("script:github.com/davidonium/floridaman:v0.1 (by tindrem)"),
 	)
 	if err != nil {
 		logger.Fatalln("Failed to create reddit client", err)
 	}
 
-	client := redis.NewClient(&redis.Options{
-		Addr:     os.Getenv("REDIS_ADDR"),
-		Password: "",
-		DB:       0,
-	})
+	client := redis.NewClient(
+		&redis.Options{
+			Addr:     os.Getenv("REDIS_ADDR"),
+			Password: "",
+			DB:       0,
+		},
+	)
 
 	if err != nil {
 		logger.Fatalln("Failed to create bot", err)
@@ -57,7 +59,7 @@ func ReadRedditArticles(logger *log.Logger) {
 		}
 		posts, _, err := redditClient.Subreddit.TopPosts(context.Background(), "floridaman", opts)
 		if err != nil {
-			log.Fatalf("Failed to fetch /r/rFloridaMan?after=%s err: %v\n", after, err)
+			log.Fatalf("Failed to fetch /r/FloridaMan?after=%s err: %v\n", after, err)
 		}
 
 		postNum := len(posts)
@@ -67,9 +69,9 @@ func ReadRedditArticles(logger *log.Logger) {
 		}
 
 		for _, post := range posts {
-			fma := floridaman.NewArticleFromReddit(post)
+			fma := NewArticleFromReddit(post)
 
-			h := floridaman.SHA1String(fma.Title)
+			h := util.SHA1String(fma.Title)
 			key := fmt.Sprintf("fm:%s", h)
 
 			ex, _ := client.Exists(context.Background(), key).Result()
@@ -82,5 +84,13 @@ func ReadRedditArticles(logger *log.Logger) {
 		}
 
 		after = posts[postNum-1].FullID
+	}
+}
+
+func NewArticleFromReddit(post *reddit.Post) floridaman.Article {
+	return floridaman.Article{
+		Title:  post.Title,
+		Link:   post.URL,
+		Source: "reddit",
 	}
 }
