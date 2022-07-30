@@ -50,6 +50,8 @@ func ReadRedditArticles(logger *log.Logger) {
 
 		logger.Printf("requesting /r/FloridaMan/top after=%s\n", after)
 
+		ctx := context.Background()
+
 		opts := &reddit.ListPostOptions{
 			ListOptions: reddit.ListOptions{
 				Limit: 100,
@@ -57,7 +59,7 @@ func ReadRedditArticles(logger *log.Logger) {
 			},
 			Time: "all",
 		}
-		posts, _, err := redditClient.Subreddit.TopPosts(context.Background(), "floridaman", opts)
+		posts, _, err := redditClient.Subreddit.TopPosts(ctx, "floridaman", opts)
 		if err != nil {
 			log.Fatalf("Failed to fetch /r/FloridaMan?after=%s err: %v\n", after, err)
 		}
@@ -74,12 +76,12 @@ func ReadRedditArticles(logger *log.Logger) {
 			h := util.SHA1String(fma.Title)
 			key := fmt.Sprintf("fm:%s", h)
 
-			ex, _ := client.Exists(context.Background(), key).Result()
+			ex, _ := client.Exists(ctx, key).Result()
 			if ex > 0 {
 				logger.Printf("Floridaman article with key \"%s\" already exists\n", key)
 			} else {
 				j, _ := json.Marshal(fma)
-				client.Set(context.Background(), key, string(j), 0)
+				client.Set(ctx, key, string(j), 0)
 			}
 		}
 
