@@ -9,7 +9,6 @@ events {
 }
 
 http {
-
 	##
 	# Basic Settings
 	##
@@ -33,7 +32,7 @@ http {
 	# SSL Settings
 	##
 
-	ssl_protocols TLSv1 TLSv1.1 TLSv1.2; # Dropping SSLv3, ref: POODLE
+	ssl_protocols TLSv1.2 TLSv1.3;
 	ssl_prefer_server_ciphers on;
 
 	ssl_session_cache   shared:SSL:10m;
