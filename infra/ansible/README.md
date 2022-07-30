@@ -2,7 +2,7 @@
 
 Copy versioned vars file. Then modify to match your infrastructure
 ```bash
-cp floridaman_vars.yml.dist floridaman_vars.yml
+cp vars.local.yml.dist vars.local.yml
 ```
 
 Machine provisioning:

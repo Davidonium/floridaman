@@ -2,7 +2,8 @@
 - hosts: floridaman
   become: true
   vars_files:
-    - floridaman_vars.yml
+    - vars.yml
+    - vars.local.yml
   roles:
     - nginx-base
     - certs
