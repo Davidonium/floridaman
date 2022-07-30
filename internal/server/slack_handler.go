@@ -23,7 +23,7 @@ var ErrInvalidSlackRequest = errors.New("invalid slack request")
 
 func (s *Server) slackRandomArticleHandler(
 	logger *log.Logger,
-	ar floridaman.ArticleReader,
+	articleReader floridaman.ArticleReader,
 	slackSecret string,
 ) APIHandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) error {
@@ -46,7 +46,7 @@ func (s *Server) slackRandomArticleHandler(
 			return ErrInvalidSlackRequest
 		}
 
-		article, err := ar.Random()
+		article, err := articleReader.Random()
 		if err != nil {
 			return err
 		}
