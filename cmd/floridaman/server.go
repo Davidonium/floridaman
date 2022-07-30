@@ -28,8 +28,8 @@ func HTTPServerListen(logger *log.Logger) {
 	mux := http.NewServeMux()
 	mux.Handle("/health", ah.ToHandler(floridaman.NewHealthHandler(client)))
 	mux.Handle("/random", ah.ToHandler(floridaman.NewRandomHandler(articleReader)))
-	mux.Handle("/random-slack", ah.ToHandler(floridaman.NewSlackRandomHandler(logger, articleReader, os.Getenv("SLACK_SIGNING_SECRET"))))
-	mux.Handle("/redirect-slack", ah.ToHandler(floridaman.NewSlackOAuthRedirectHandler()))
+	mux.Handle("/slack/random", ah.ToHandler(floridaman.NewSlackRandomHandler(logger, articleReader, os.Getenv("SLACK_SIGNING_SECRET"))))
+	mux.Handle("/slack/redirect", ah.ToHandler(floridaman.NewSlackOAuthRedirectHandler()))
 
 	port := GetEnvDefault("APP_PORT", "8081")
 	srv := &http.Server{

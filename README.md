@@ -62,7 +62,7 @@ Returns a random entry in each request
 }
 ```
 
-`POST /random-slack`
+`POST /slack/random`
 
 This endpoint handles slack slash commands that one must setup following https://api.slack.com/interactivity/slash-commands#app_command_handling
 
