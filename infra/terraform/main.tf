@@ -3,7 +3,7 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 3.0"
+      version = "~> 4.0"
     }
   }
 }
@@ -13,6 +13,10 @@ locals {
   region   = "eu-west-3"
 }
 
+provider "aws" {
+  region = local.region
+  profile = local.app_name
+}
 
 resource "aws_lightsail_static_ip_attachment" "app" {
   static_ip_name = aws_lightsail_static_ip.app.name
