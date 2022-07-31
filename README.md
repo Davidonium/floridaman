@@ -8,7 +8,7 @@ The project uses Redis for storage and [go-reddit](https://github.com/vartanbeno
 
 Terraform and Ansible are used to provide a very simple infrastructure of a single machine in amazon lightsail with redis installed and an nginx for proxying requests to the go app. The code is under `infra`.
 
-* Terraform version used: `v0.12.18`
+* Terraform version used: `1.2.6`
 * Ansible version used: `2.9.2`
 
 ## Compile

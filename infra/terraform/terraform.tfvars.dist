@@ -1,2 +1,2 @@
-domain = "..."
-pgp_key = "..."
+domain = "..." # base domain without subdomains. e.g. davidonium.com
+pgp_key = "..." # base64 encoded gpg public key (NO HEADERS)
