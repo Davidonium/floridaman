@@ -7,8 +7,9 @@ import (
 	"os"
 	"time"
 
-	"github.com/davidonium/floridaman/internal/util"
 	"github.com/go-redis/redis/v8"
+
+	"github.com/davidonium/floridaman/internal/util"
 
 	"github.com/davidonium/floridaman/internal/server"
 	"github.com/davidonium/floridaman/internal/storage"

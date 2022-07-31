@@ -79,7 +79,7 @@ func ReadRedditArticles(logger *log.Logger) {
 
 			ex, err := client.Exists(ctx, key).Result()
 			if err != nil {
-				logger.Printf("failed to check that key \"%s\" exists, skipping\n")
+				logger.Printf("failed to check that key \"%s\" exists, skipping\n", key)
 				continue
 			}
 			if ex > 0 {
