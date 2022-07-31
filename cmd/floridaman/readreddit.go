@@ -26,7 +26,7 @@ func ReadRedditArticles(logger *log.Logger) {
 		reddit.WithUserAgent("script:github.com/davidonium/floridaman:v0.1 (by tindrem)"),
 	)
 	if err != nil {
-		logger.Fatalln("Failed to create reddit client", err)
+		logger.Fatalln("failed to create reddit client", err)
 	}
 
 	client := redis.NewClient(
@@ -38,7 +38,7 @@ func ReadRedditArticles(logger *log.Logger) {
 	)
 
 	if err != nil {
-		logger.Fatalln("Failed to create bot", err)
+		logger.Fatalln("failed to create bot", err)
 	}
 
 	first := true
@@ -62,7 +62,7 @@ func ReadRedditArticles(logger *log.Logger) {
 		}
 		posts, response, err := redditClient.Subreddit.TopPosts(ctx, "floridaman", opts)
 		if err != nil {
-			logger.Fatalf("Failed to fetch /r/FloridaMan?after=%s err: %v\n", after, err)
+			logger.Fatalf("failed to fetch /r/FloridaMan?after=%s err: %v\n", after, err)
 		}
 
 		for _, post := range posts {
@@ -77,7 +77,7 @@ func ReadRedditArticles(logger *log.Logger) {
 				continue
 			}
 			if ex > 0 {
-				logger.Printf("Floridaman article with key \"%s\" already exists\n", key)
+				logger.Printf("floridaman article with key \"%s\" already exists\n", key)
 			} else {
 				j, _ := json.Marshal(fma)
 				client.Set(ctx, key, string(j), 0)
