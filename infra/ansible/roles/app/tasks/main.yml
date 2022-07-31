@@ -45,7 +45,13 @@
     state: started
     enabled: yes
 
-- name: floridaman readreddit cron is enabled
+- name: floridaman readreddit service is enabled
   service:
-    name: floridaman-readreddit
+    name: floridaman-readreddit.service
+    enabled: yes
+
+- name: floridaman readreddit timer is enabled and started
+  service:
+    name: floridaman-readreddit.timer
+    state: started
     enabled: yes
