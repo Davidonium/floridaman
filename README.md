@@ -6,11 +6,6 @@ Also includes a script that retrieves all the floridaman headings from /r/florid
 
 The project uses Redis for storage and [go-reddit](https://github.com/vartanbeno/go-reddit) for querying the reddit API.
 
-Terraform and Ansible are used to provide a very simple infrastructure of a single machine in amazon lightsail with redis installed and an nginx for proxying requests to the go app. The code is under `infra`.
-
-* Terraform version used: `1.2.6`
-* Ansible version used: `2.9.2`
-
 ## Compile
 
 ```bash
@@ -100,6 +95,13 @@ Generic Errors:
   "message": "Internal server error"
 }
 ```
+
+### Infrastructure
+
+Terraform and Ansible are used to provide a very simple infrastructure of a single machine in amazon lightsail with redis installed and an nginx for proxying requests to the go app. The code is under `infra`.
+
+See the [ansible README](./infra/ansible/README.md) and the [terraform README](./infra/terraform/README.md) for more details on how to use them.
+
 
 ### Disclamer
 I did this project for fun as a result of a joke with some friends at work and me wanting to learn terraform and ansible. It features 0 tests and bad practices, I don't work like this though :D.
