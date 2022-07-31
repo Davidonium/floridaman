@@ -28,8 +28,14 @@ resource "aws_lightsail_static_ip" "app" {
   name = local.app_name
 }
 
+resource "random_string" "instance_suffix" {
+  length  = 5
+  special = false
+  upper   = false
+}
+
 resource "aws_lightsail_instance" "app" {
-  name              = local.full_domain
+  name              = "${local.full_domain}-${random_string.instance_suffix.result}"
   availability_zone = "${local.region}b"
   blueprint_id      = "ubuntu_20_04"
   bundle_id         = "micro_2_0"

@@ -57,11 +57,11 @@ terraform apply -auto-approve
 This will make the instance available through ssh
 ```bash
 # the private key needs to be decoded from base64 and be decrypted using gpg with the same key provided for "pgp_key" tfvar
-terraform output private_key | base64 -D | gpg --decrypt --input - > ~/.ssh/id_floridaman
+terraform output -raw private_key | base64 -D | gpg --decrypt --input - > ~/.ssh/id_floridaman
 # make the permissions of the private key secure
 chmod 600 ~/.ssh/id_floridaman 
-terraform output pub_key > ~/.ssh/id_floridaman.pub
-terraform output ssh_config >> ~/.ssh/config
+terraform output -raw pub_key > ~/.ssh/id_floridaman.pub
+terraform output -raw ssh_config >> ~/.ssh/config
 ```
 
 You should now be able to ssh into the created instance using:
