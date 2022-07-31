@@ -33,11 +33,11 @@ func (r *RedisArticleReader) Random(ctx context.Context) (floridaman.Article, er
 	return a, nil
 }
 
-func (r *RedisArticleReader) RawRandom(ctx context.Context) (string, error) {
+func (r *RedisArticleReader) RawRandom(ctx context.Context) ([]byte, error) {
 	key, err := r.client.RandomKey(ctx).Result()
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
-	return r.client.Get(ctx, key).Result()
+	return r.client.Get(ctx, key).Bytes()
 }

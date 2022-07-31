@@ -72,9 +72,9 @@ func (s *Server) handleAPI(handler APIHandlerFunc) http.HandlerFunc {
 	}
 }
 
-func (s *Server) writeJSONString(w http.ResponseWriter, data string) error {
+func (s *Server) writeBytes(w http.ResponseWriter, data []byte) error {
 	w.WriteHeader(http.StatusOK)
-	_, _ = w.Write([]byte(data))
+	_, _ = w.Write(data)
 	return nil
 }
 

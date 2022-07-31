@@ -10,5 +10,5 @@ type Article struct {
 
 type ArticleReader interface {
 	Random(context.Context) (Article, error)
-	RawRandom(context.Context) (string, error)
+	RawRandom(context.Context) ([]byte, error)
 }

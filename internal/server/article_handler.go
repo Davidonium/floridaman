@@ -13,6 +13,6 @@ func (s *Server) randomArticleHandler(ar floridaman.ArticleReader) APIHandlerFun
 			return err
 		}
 
-		return s.writeJSONString(w, rawArticle)
+		return s.writeBytes(w, rawArticle)
 	}
 }
