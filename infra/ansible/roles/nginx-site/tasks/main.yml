@@ -6,6 +6,7 @@
     owner: root
     group: root
     mode: 0644
+  register: nginx_site_conf
 
 - name: remove default site
   file:
@@ -19,7 +20,6 @@
     owner: root
     group: root
     state: link
-  register: nginx_site_conf
 
 - name: restart nginx
   service:
