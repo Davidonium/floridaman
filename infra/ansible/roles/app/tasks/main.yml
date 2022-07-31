@@ -3,11 +3,13 @@
   file:
     path: "{{ app_dir }}"
     state: directory
+    owner: ubuntu
+    group: ubuntu
     mode: '0755'
 
 - name: copy api binary to server
   copy:
-    src: "{{ src_dir }}/build/floridaman"
+    src: "{{ src_dir }}/build/floridaman_linux"
     dest: "{{ app_dir }}/floridaman"
     owner: ubuntu
     group: ubuntu
