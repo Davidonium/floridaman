@@ -1,5 +1,11 @@
 # Ansible playbooks
 
+
+## Installation
+
+In order to run ansible, this guide should be followed:
+- https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html#installing-and-upgrading-ansible
+
 Copy versioned vars file. Then modify to match your infrastructure
 ```bash
 cp vars.local.yml.dist vars.local.yml
