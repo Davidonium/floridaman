@@ -5,4 +5,4 @@
 
 *.tfvars
 
-ansible/floridaman_vars.yml
+ansible/vars.local.yml
