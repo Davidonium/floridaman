@@ -7,6 +7,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/davidonium/floridaman/internal/util"
 	"github.com/go-redis/redis/v8"
 
 	"github.com/davidonium/floridaman/internal/server"
@@ -16,7 +17,7 @@ import (
 func HTTPServerListen(logger *log.Logger) {
 	redisClient := redis.NewClient(
 		&redis.Options{
-			Addr:        GetEnvDefault("REDIS_ADDR", "127.0.0.1:6379"),
+			Addr:        util.GetEnvDefault("REDIS_ADDR", "127.0.0.1:6379"),
 			Password:    "",
 			DB:          0,
 			MaxRetries:  3,
@@ -32,7 +33,7 @@ func HTTPServerListen(logger *log.Logger) {
 		articleReader,
 	)
 
-	port := GetEnvDefault("APP_PORT", "8081")
+	port := util.GetEnvDefault("APP_PORT", "8081")
 	srv := &http.Server{
 		Addr:              fmt.Sprintf(":%s", port),
 		Handler:           serv,
@@ -48,15 +49,4 @@ func HTTPServerListen(logger *log.Logger) {
 	err := srv.ListenAndServe()
 
 	logger.Fatalln(err)
-}
-
-// GetEnvDefault gets the `key` environment variable or returns the default value.
-func GetEnvDefault(key, d string) string {
-	e, ok := os.LookupEnv(key)
-
-	if !ok {
-		e = d
-	}
-
-	return e
 }
