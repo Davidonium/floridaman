@@ -1,13 +1,4 @@
 ---
-- name: ensure software-properties-common is present
-  apt:
-    name: software-properties-common
-    state: present
-
-- name: ensure certbot repo is present
-  apt_repository:
-    repo: ppa:certbot/certbot
-
 - name: ensure certbot is present
   apt:
     name: certbot
@@ -16,7 +7,7 @@
 
 - name: ensure certbot nginx plugin is present
   apt:
-    name: python-certbot-nginx
+    name: python3-certbot-nginx
     state: present
     update_cache: true
 

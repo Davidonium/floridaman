@@ -19,9 +19,10 @@
     owner: root
     group: root
     state: link
+  register: nginx_site_conf
 
 - name: restart nginx
   service:
     name: nginx
     state: restarted
-
+  when: nginx_site_conf.changed
