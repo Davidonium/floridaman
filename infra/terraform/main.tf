@@ -31,7 +31,7 @@ resource "aws_lightsail_static_ip" "app" {
 resource "aws_lightsail_instance" "app" {
   name              = local.full_domain
   availability_zone = "${local.region}b"
-  blueprint_id      = "ubuntu_22_04"
+  blueprint_id      = "ubuntu_20_04"
   bundle_id         = "micro_2_0"
   key_pair_name     = aws_lightsail_key_pair.app.name
 }
