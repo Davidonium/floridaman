@@ -24,7 +24,7 @@ func (r *RedisArticleReader) Random(ctx context.Context) (floridaman.Article, er
 	}
 
 	a := floridaman.Article{}
-	err = json.Unmarshal([]byte(rawArticle), &a)
+	err = json.Unmarshal(rawArticle, &a)
 
 	if err != nil {
 		return floridaman.Article{}, err
