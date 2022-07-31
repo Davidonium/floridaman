@@ -10,7 +10,7 @@ terraform {
 
 locals {
   app_name = "floridaman"
-  region = "eu-west-3"
+  region   = "eu-west-3"
 }
 
 

@@ -13,6 +13,6 @@ output "pub_key" {
 }
 
 output "private_key" {
-  value = aws_lightsail_key_pair.app.encrypted_private_key
+  value     = aws_lightsail_key_pair.app.encrypted_private_key
   sensitive = true
 }
