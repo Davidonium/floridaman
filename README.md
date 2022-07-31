@@ -114,5 +114,8 @@ Hopefully I haven't leaked any aws or reddit credentials, if I have please notif
 Random commands that I usually forget.
 ```bash
 # get logs
-ssh floridaman journalctl -u floridaman.service
+ssh floridaman "sudo journalctl -u floridaman.service"
+
+# check for enabled timers and last execution
+ssh floridaman "sudo systemctl list-timers"
 ```
