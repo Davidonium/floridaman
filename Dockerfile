@@ -3,7 +3,6 @@ RUN useradd -u 10001 floridaman
 
 WORKDIR /tmp/go
 
-COPY Makefile ./
 COPY go.mod ./
 COPY go.sum ./
 
@@ -11,6 +10,8 @@ RUN go mod download
 
 COPY cmd/ ./cmd
 COPY *.go ./
+
+COPY Makefile ./
 
 RUN make build
 
