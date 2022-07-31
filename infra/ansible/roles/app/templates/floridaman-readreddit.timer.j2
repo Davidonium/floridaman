@@ -1,0 +1,11 @@
+[Unit]
+Description=Run floridaman readreddit daily
+
+[Timer]
+OnCalendar=daily
+Persistent=true
+OnBootSec=120
+Unit=floridaman-readreddit.service
+
+[Install]
+WantedBy=timers.target

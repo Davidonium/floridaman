@@ -23,8 +23,29 @@
     group: ubuntu
     mode: '0644'
 
+- name: create readreddit timer file
+  template:
+    src: floridaman-readreddit.timer.j2
+    dest: /lib/systemd/system/floridaman-readreddit.timer
+    owner: ubuntu
+    group: ubuntu
+    mode: '0644'
+
+- name: create readreddit cron service file
+  template:
+    src: floridaman-readreddit.service.j2
+    dest: /lib/systemd/system/floridaman-readreddit.service
+    owner: ubuntu
+    group: ubuntu
+    mode: '0644'
+
 - name: floridaman api is restarted
   service:
     name: floridaman
     state: started
+    enabled: yes
+
+- name: floridaman readreddit cron is enabled
+  service:
+    name: floridaman-readreddit
     enabled: yes

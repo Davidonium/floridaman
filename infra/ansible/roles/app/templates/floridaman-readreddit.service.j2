@@ -1,0 +1,25 @@
+[Unit]
+Description=Floridaman readreddit cron
+ConditionPathExists={{ app_dir }}
+After=network.target
+
+[Service]
+Type=simple
+User=ubuntu
+Group=ubuntu
+
+WorkingDirectory={{ app_dir }}
+
+Environment=REDIS_ADDR=127.0.0.1:{{ redis_port }}
+Environment=APP_PORT=8081
+EnvironmentFile={{ app_dir }}/environment.conf
+ExecStart={{ app_dir }}/floridaman readreddit
+
+PermissionsStartOnly=true
+
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=floridaman-readreddit
+
+[Install]
+WantedBy=default.target
