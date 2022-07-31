@@ -60,15 +60,9 @@ func ReadRedditArticles(logger *log.Logger) {
 			},
 			Time: "all",
 		}
-		posts, _, err := redditClient.Subreddit.TopPosts(ctx, "floridaman", opts)
+		posts, response, err := redditClient.Subreddit.TopPosts(ctx, "floridaman", opts)
 		if err != nil {
-			log.Fatalf("Failed to fetch /r/FloridaMan?after=%s err: %v\n", after, err)
-		}
-
-		postNum := len(posts)
-		if postNum == 0 {
-			after = ""
-			continue
+			logger.Fatalf("Failed to fetch /r/FloridaMan?after=%s err: %v\n", after, err)
 		}
 
 		for _, post := range posts {
@@ -90,7 +84,7 @@ func ReadRedditArticles(logger *log.Logger) {
 			}
 		}
 
-		after = posts[postNum-1].FullID
+		after = response.After
 	}
 }
 
