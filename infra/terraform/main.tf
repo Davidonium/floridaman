@@ -11,6 +11,7 @@ terraform {
 locals {
   app_name = "floridaman"
   region   = "eu-west-3"
+  full_domain = "${local.app_name}.${var.domain}"
 }
 
 provider "aws" {
@@ -28,7 +29,7 @@ resource "aws_lightsail_static_ip" "app" {
 }
 
 resource "aws_lightsail_instance" "app" {
-  name              = "${local.app_name}.${var.domain}"
+  name              = local.full_domain
   availability_zone = "${local.region}b"
   blueprint_id      = "ubuntu_22_04"
   bundle_id         = "micro_2_0"
@@ -79,6 +80,6 @@ resource "aws_route53_record" "app" {
 }
 
 resource "aws_lightsail_key_pair" "app" {
-  name    = var.domain
+  name    = local.full_domain
   pgp_key = var.pgp_key
 }
