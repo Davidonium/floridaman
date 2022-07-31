@@ -63,3 +63,9 @@ chmod 600 ~/.ssh/id_floridaman
 terraform output pub_key > ~/.ssh/id_floridaman.pub
 terraform output ssh_config >> ~/.ssh/config
 ```
+
+You should now be able to ssh into the created instance using:
+
+```bash
+ssh floridaman
+```
