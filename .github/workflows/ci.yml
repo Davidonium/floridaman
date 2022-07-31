@@ -1,11 +1,6 @@
 name: 'Floridaman CI'
 
-on:
-  push:
-    branches:
-      - master
-  pull_request:
-    types: [opened, reopened, edited]
+on: [push, pull_request]
 
 permissions:
   contents: read
