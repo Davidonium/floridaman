@@ -17,6 +17,7 @@
     owner: root
     group: root
     mode: 0644
+  register: nginx_conf_proxy
 
 - name: ensure nginx conf is present
   template:
@@ -25,10 +26,10 @@
     owner: root
     group: root
     mode: 0644
-  register: nginxconf
+  register: nginx_conf
 
 - name: restart nginx
   service:
     name: nginx
     state: restarted
-  when: nginxconf.changed
+  when: nginx_conf.changed or nginx_conf_proxy.changed
