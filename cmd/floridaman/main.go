@@ -40,5 +40,5 @@ func main() {
 }
 
 func printErr(msg string, args ...any) {
-	_, _ = fmt.Fprintf(os.Stderr, msg, args...)
+	_, _ = fmt.Fprintf(os.Stderr, msg+"\n", args...)
 }
