@@ -26,12 +26,12 @@ func HTTPServerListen(logger *log.Logger) {
 		},
 	)
 
-	articleReader := storage.NewRedisArticleReader(redisClient)
+	articleStorage := storage.NewRedisArticleStorage(redisClient)
 
 	serv := server.NewServer(
 		logger,
 		redisClient,
-		articleReader,
+		articleStorage,
 	)
 
 	port := util.GetEnvDefault("APP_PORT", "8081")

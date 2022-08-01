@@ -2,16 +2,14 @@ package main
 
 import (
 	"context"
-	"encoding/json"
-	"fmt"
 	"log"
 	"os"
 
+	"github.com/davidonium/floridaman/internal/storage"
 	"github.com/go-redis/redis/v8"
 	"github.com/vartanbeno/go-reddit/v2/reddit"
 
 	"github.com/davidonium/floridaman/internal/floridaman"
-	"github.com/davidonium/floridaman/internal/util"
 )
 
 func ReadRedditArticles(logger *log.Logger) {
@@ -38,17 +36,14 @@ func ReadRedditArticles(logger *log.Logger) {
 	)
 
 	if err != nil {
-		logger.Fatalln("failed to create bot", err)
+		logger.Fatalln("failed to create redis client", err)
 	}
 
-	first := true
+	articleStorage := storage.NewRedisArticleStorage(client)
+
 	after := ""
 
-	for first || len(after) > 0 {
-		if first {
-			first = false
-		}
-
+	for {
 		logger.Printf("requesting /r/FloridaMan/top after=%s\n", after)
 
 		ctx := context.Background()
@@ -66,26 +61,28 @@ func ReadRedditArticles(logger *log.Logger) {
 		}
 
 		for _, post := range posts {
-			fma := articleFromReddit(post)
+			article := articleFromReddit(post)
 
-			h := util.SHA1String(fma.Title)
-			key := fmt.Sprintf("fm:%s", h)
-
-			ex, err := client.Exists(ctx, key).Result()
+			ok, err := articleStorage.ExistsByTitle(ctx, article.Title)
 			if err != nil {
-				logger.Printf("failed to check that key \"%s\" exists, skipping\n", key)
+				logger.Printf("failed to check that article \"%s\" exists, skipping\n", article.Title)
 				continue
 			}
-			if ex > 0 {
-				logger.Printf("floridaman article with key \"%s\" already exists\n", key)
+			if ok {
+				logger.Printf("floridaman article \"%s\" already exists\n", article.Title)
 			} else {
-				j, _ := json.Marshal(fma)
-				client.Set(ctx, key, string(j), 0)
+				articleStorage.Save(ctx, article)
 			}
 		}
 
 		after = response.After
+
+		if after == "" {
+			break
+		}
 	}
+
+	logger.Println("finished reading reddit floridaman articles")
 }
 
 func articleFromReddit(post *reddit.Post) floridaman.Article {

@@ -23,16 +23,16 @@ type Server struct {
 	logger *log.Logger
 	mux    *http.ServeMux
 
-	redisClient   *redis.Client
-	articleReader floridaman.ArticleReader
+	redisClient    *redis.Client
+	articleStorage floridaman.ArticleStorage
 }
 
-func NewServer(logger *log.Logger, redisClient *redis.Client, articleReader floridaman.ArticleReader) *Server {
+func NewServer(logger *log.Logger, redisClient *redis.Client, articleStorage floridaman.ArticleStorage) *Server {
 	srv := &Server{
-		logger:        logger,
-		mux:           http.NewServeMux(),
-		redisClient:   redisClient,
-		articleReader: articleReader,
+		logger:         logger,
+		mux:            http.NewServeMux(),
+		redisClient:    redisClient,
+		articleStorage: articleStorage,
 	}
 	srv.routes()
 
@@ -45,10 +45,10 @@ func (s *Server) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 
 func (s *Server) routes() {
 	s.mux.Handle("/health", s.handleAPI(s.healthHandler(s.redisClient)))
-	s.mux.Handle("/random", s.handleAPI(s.randomArticleHandler(s.articleReader)))
+	s.mux.Handle("/random", s.handleAPI(s.randomArticleHandler(s.articleStorage)))
 	s.mux.Handle(
 		"/slack/random",
-		s.handleAPI(s.slackRandomArticleHandler(s.logger, s.articleReader, os.Getenv("SLACK_SIGNING_SECRET"))),
+		s.handleAPI(s.slackRandomArticleHandler(s.logger, s.articleStorage, os.Getenv("SLACK_SIGNING_SECRET"))),
 	)
 	s.mux.Handle("/slack/redirect", s.handleAPI(s.oauthSlackRedirectHandler()))
 }

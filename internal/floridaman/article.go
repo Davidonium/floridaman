@@ -8,7 +8,9 @@ type Article struct {
 	Source string `json:"source"`
 }
 
-type ArticleReader interface {
+type ArticleStorage interface {
 	Random(context.Context) (Article, error)
 	RawRandom(context.Context) ([]byte, error)
+	Save(context.Context, Article)
+	ExistsByTitle(context.Context, string) (bool, error)
 }

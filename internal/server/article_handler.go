@@ -6,9 +6,9 @@ import (
 	"github.com/davidonium/floridaman/internal/floridaman"
 )
 
-func (s *Server) randomArticleHandler(ar floridaman.ArticleReader) APIHandlerFunc {
+func (s *Server) randomArticleHandler(articleStorage floridaman.ArticleStorage) APIHandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) error {
-		rawArticle, err := ar.RawRandom(r.Context())
+		rawArticle, err := articleStorage.RawRandom(r.Context())
 		if err != nil {
 			return err
 		}
