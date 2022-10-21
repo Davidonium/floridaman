@@ -2,7 +2,7 @@
 
 
 ## tfenv
-tfenv is recommended to install terraform, as there's a `.terraform-version` file that will pick ip the correct terraform version to use.
+tfenv is recommended to install terraform, as there's a `.terraform-version` file that will pick up the correct terraform version to use.
 
 Installation instructions: [https://github.com/tfutils/tfenv]()
 
