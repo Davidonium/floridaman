@@ -5,9 +5,10 @@ import (
 	"log"
 	"os"
 
-	"github.com/davidonium/floridaman/internal/storage"
 	"github.com/go-redis/redis/v8"
 	"github.com/vartanbeno/go-reddit/v2/reddit"
+
+	"github.com/davidonium/floridaman/internal/storage"
 
 	"github.com/davidonium/floridaman/internal/floridaman"
 )

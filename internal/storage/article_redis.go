@@ -5,8 +5,9 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/davidonium/floridaman/internal/util"
 	"github.com/go-redis/redis/v8"
+
+	"github.com/davidonium/floridaman/internal/util"
 
 	"github.com/davidonium/floridaman/internal/floridaman"
 )
