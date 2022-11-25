@@ -65,7 +65,7 @@ func ReadRedditArticles(logger *log.Logger) {
 
 			ok, err := articleStorage.ExistsByTitle(ctx, article.Title)
 			if err != nil {
-				logger.Printf("failed to check that article \"%s\" exists, skipping\n", article.Title)
+				logger.Printf("failed to check that article \"%s\" exists, skipping: %v\n", article.Title, err)
 				continue
 			}
 			if ok {

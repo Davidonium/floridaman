@@ -39,9 +39,8 @@ func HTTPServerListen(logger *log.Logger) {
 		Addr:              fmt.Sprintf(":%s", port),
 		Handler:           serv,
 		ErrorLog:          log.New(os.Stdout, "", log.LstdFlags),
-		ReadTimeout:       15 * time.Second,
-		ReadHeaderTimeout: 10 * time.Second,
-		WriteTimeout:      10 * time.Second,
+		ReadHeaderTimeout: 5 * time.Second,
+		WriteTimeout:      15 * time.Second,
 		IdleTimeout:       30 * time.Second,
 	}
 

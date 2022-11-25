@@ -81,7 +81,7 @@ func (s *Server) writeBytes(w http.ResponseWriter, data []byte) error {
 func (s *Server) writeJSON(w http.ResponseWriter, data any) error {
 	b, err := json.Marshal(data)
 	if err != nil {
-		s.logger.Printf("could not serialize response to json")
+		s.logger.Printf("could not serialize response to json: %v\n", err)
 		return err
 	}
 
@@ -97,6 +97,6 @@ func (s *Server) writeInternalError(w http.ResponseWriter) {
 	b, _ := json.Marshal(ErrorResponse{Message: "Internal server error"})
 	_, err := w.Write(b)
 	if err != nil {
-		fmt.Println("could not write response")
+		fmt.Printf("could not write response: %v\n", err)
 	}
 }
